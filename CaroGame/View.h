@@ -3,6 +3,7 @@
 
 #include "Model.h"
 #include <string>
+#include<windows.h>
 #define LEFT 3
 #define TOP 1
 
@@ -27,4 +28,7 @@ void thongTin();
 int showSettingsMenu();
 int showMenuSettings();
 void setConsoleFont();
+void waitForMouseClick();
+void showSplashScreen();
+void drawImage(std::wstring imagePath, int x, int y);
 #endif

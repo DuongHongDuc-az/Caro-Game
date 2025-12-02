@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\audio">
       <UniqueIdentifier>{96a2a621-e20b-4fb9-a377-c6293b566f40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\image">
+      <UniqueIdentifier>{0e851f64-ab7d-4423-9792-9bbcd78ed361}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp">
@@ -61,5 +64,10 @@
     <Media Include="audio\win_effect.wav">
       <Filter>Resource Files\audio</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\menu.bmp">
+      <Filter>Resource Files\image</Filter>
+    </Image>
   </ItemGroup>
 </Project>

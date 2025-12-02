@@ -37,6 +37,9 @@
     <Media Include="audio\move_effect.wav" />
     <Media Include="audio\win_effect.wav" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\menu.bmp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

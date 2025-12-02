@@ -6,11 +6,32 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include<sstream>
 #include <iomanip>
 #include<cwchar>
 using namespace std;
 
 int langChoice;
+void drawImage(std::wstring imagePath, int x, int y) {
+    HWND consoleWindow = GetConsoleWindow();
+    HDC hdc = GetDC(consoleWindow);
+
+    HBITMAP hBitmap = (HBITMAP)LoadImageW(NULL, imagePath.c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+    if (hBitmap) {
+        HDC hMemDC = CreateCompatibleDC(hdc);
+        SelectObject(hMemDC, hBitmap);
+
+        BITMAP bm;
+        GetObject(hBitmap, sizeof(bm), &bm);
+
+        BitBlt(hdc, x, y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, SRCCOPY);
+
+        DeleteDC(hMemDC);
+        DeleteObject(hBitmap);
+    }
+    ReleaseDC(consoleWindow, hdc);
+}
 int showSettingsMenu() {
     system("cls");
     setColor(240);
@@ -60,6 +81,7 @@ void fixConsoleWindow() {
     LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
     style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
     SetWindowLong(consoleWindow, GWL_STYLE, style);
+    MoveWindow(consoleWindow, 100, 100, 1100, 700, TRUE);
 }
 
 void GotoXY(int x, int y) {
@@ -217,7 +239,7 @@ void showWinEffect(int player) {
     int color = 240 + 14;
 
     if (player == 1) {
-        message = (langChoice == 1 ? "   PLAYER X WINS!   " : "   NGƯƠI CHƠI X THẮNG!   ");
+        message = (langChoice == 1 ? "   PLAYER X WINS!   " : "   NGƯOI CHƠI X THẮNG!   ");
         color = 240 + 12;
     }
     else if (player == -1) {
@@ -244,6 +266,7 @@ void showWinEffect(int player) {
 int showMainMenu() {
     system("cls");
     setColor(240);
+    drawImage(L"(image//menu.bmp)", 600, 50);
     cout << "\n\n\t\t =============== CARO GAME MENU ===============";
     cout << "\n\t\t\t     1. New Game";
     cout << "\n\t\t\t     2. Load Game";
@@ -408,4 +431,72 @@ void setConsoleFont() {
     fontInfo.FontWeight = FW_NORMAL;
     wcscpy_s(fontInfo.FaceName, L"Consolas");
     SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
+}
+
+void waitForMouseClick() {
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+	GetConsoleMode(hStdin, &mode); //lẤY CHẾ ĐỘ CONSOLE HIỆN TẠI
+    SetConsoleMode(hStdin, (mode & ~ENABLE_QUICK_EDIT_MODE) | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS);
+    FlushConsoleInputBuffer(hStdin);
+    INPUT_RECORD irInBuf[128];
+	DWORD cNumRead;
+    while (true) {
+        if (!ReadConsoleInput(hStdin, irInBuf, 128, &cNumRead)) continue;
+        for(DWORD i = 0; i < cNumRead; i++) {
+            if (irInBuf[i].EventType == MOUSE_EVENT) {
+                if(irInBuf[i].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+                    SetConsoleMode(hStdin, mode); // KHÔI PHỤC LẠI CHẾ ĐỘ CONSOLE BAN ĐẦU
+                    return;
+				}
+            }
+            if (irInBuf[i].EventType == KEY_EVENT) {
+                if (irInBuf[i].Event.KeyEvent.bKeyDown) {
+                    SetConsoleMode(hStdin, mode);
+                    return;
+                }
+            }
+		}
+    }
+}
+
+void printCentered(string text, int y, int color) {
+    int consoleWidth = 80;
+    int textLength = text.length();
+    int x = (consoleWidth - textLength) / 2; 
+    if (x < 0) x = 0;
+    GotoXY(x, y);
+    setColor(color);
+    cout << text;
+}
+
+void showSplashScreen() {
+    system("cls");
+    setColor(240);
+    string pixelLogo = R"(
+ ██████╗ █████╗ ██████╗  ██████╗      ██████╗  █████╗ ███╗   ███╗███████╗
+██╔════╝██╔══██╗██╔══██╗██╔═══██╗    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
+██║     ███████║██████╔╝██║   ██║    ██║  ███╗███████║██╔████╔██║█████╗  
+██║     ██╔══██║██╔══██╗██║   ██║    ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  
+╚██████╗██║  ██║██║  ██║╚██████╔╝    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
+  )";
+    stringstream ss(pixelLogo);
+    string line;
+    int y = 5; 
+    while (getline(ss, line)) {
+        if (line.length() > 0 && line.find_first_not_of(" \t\r\n") != string::npos) {
+            printCentered(line, y++, 240 + 9); 
+        }
+    }
+    int promptY = 20;
+    GotoXY(20, promptY);
+    setColor(240 + 12); 
+    cout << "Ấn phím xuống để vào";
+    GotoXY(25, promptY + 2);
+    setColor(240 + 8);
+    cout << "Comming soon";
+    waitForMouseClick();
+    system("cls");
+    setColor(240);
 }
