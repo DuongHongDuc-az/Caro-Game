@@ -5,7 +5,8 @@
 #include<iostream>
 int main() {
     fixConsoleWindow();
-    void setConsoleFont();
+    system("pause");
+    setConsoleFont();
     SetConsoleOutputCP(65001);
     AudioManager::getInstance().init();
     setColor(240);

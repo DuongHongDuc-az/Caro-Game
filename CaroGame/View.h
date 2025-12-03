@@ -30,5 +30,8 @@ int showMenuSettings();
 void setConsoleFont();
 void waitForMouseClick();
 void showSplashScreen();
-void drawImage(std::wstring imagePath, int x, int y);
+void drawMenu(int x, int y, int width, int height);
+void printCentered(std::string text, int y, int color);
+void drawRightSideImage();
+void randomizeSideImage();
 #endif

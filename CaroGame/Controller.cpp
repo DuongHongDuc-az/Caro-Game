@@ -46,7 +46,7 @@ static void handleSettings() {
         }
     }
 }
-
+extern void randomizeSideImage();
 void run() {
     fixConsoleWindow();
     langChoice = 1;
@@ -55,6 +55,7 @@ void run() {
     while (true) {
         switch (choice) {
         case 1:
+            randomizeSideImage();
             resetData();
             runGameLoop();
             break;

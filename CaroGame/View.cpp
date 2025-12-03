@@ -12,26 +12,7 @@
 using namespace std;
 
 int langChoice;
-void drawImage(std::wstring imagePath, int x, int y) {
-    HWND consoleWindow = GetConsoleWindow();
-    HDC hdc = GetDC(consoleWindow);
 
-    HBITMAP hBitmap = (HBITMAP)LoadImageW(NULL, imagePath.c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-
-    if (hBitmap) {
-        HDC hMemDC = CreateCompatibleDC(hdc);
-        SelectObject(hMemDC, hBitmap);
-
-        BITMAP bm;
-        GetObject(hBitmap, sizeof(bm), &bm);
-
-        BitBlt(hdc, x, y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, SRCCOPY);
-
-        DeleteDC(hMemDC);
-        DeleteObject(hBitmap);
-    }
-    ReleaseDC(consoleWindow, hdc);
-}
 int showSettingsMenu() {
     system("cls");
     setColor(240);
@@ -78,10 +59,31 @@ int showMenuSettings() {
 
 void fixConsoleWindow() {
     HWND consoleWindow = GetConsoleWindow();
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_FONT_INFOEX fontInfo;
+    fontInfo.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+    GetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
+    wcscpy_s(fontInfo.FaceName, L"Consolas"); 
+    fontInfo.dwFontSize.X = 0; 
+    fontInfo.dwFontSize.Y = 16; 
+    SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
+    COORD bufferSize = { 120, 65 };
+    SetConsoleScreenBufferSize(hConsole, bufferSize);
+    SMALL_RECT windowSize = { 0, 0, 119, 60 }; 
+    SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
     LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
     style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
     SetWindowLong(consoleWindow, GWL_STYLE, style);
-    MoveWindow(consoleWindow, 100, 100, 1100, 700, TRUE);
+    HMENU hmenu = GetSystemMenu(consoleWindow, FALSE);
+    EnableMenuItem(hmenu, SC_CLOSE, MF_ENABLED);
+    RECT rectClient, rectWindow;
+    GetClientRect(consoleWindow, &rectClient);
+    GetWindowRect(consoleWindow, &rectWindow);
+    int width = 1200; 
+    int height = 700; 
+    int posX = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+    int posY = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+    MoveWindow(consoleWindow, posX, posY, width, height, TRUE);
 }
 
 void GotoXY(int x, int y) {
@@ -130,6 +132,7 @@ void updateCellAtBoardIndex(int col, int row, int player) {
 
 void drawBoard() {
     system("cls");
+	drawRightSideImage();
     setColor(249);
     for (int i = 0; i <= BOARD_SIZE; ++i) {
         for (int j = 0; j <= BOARD_SIZE; ++j) {
@@ -266,95 +269,88 @@ void showWinEffect(int player) {
 int showMainMenu() {
     system("cls");
     setColor(240);
-    drawImage(L"(image//menu.bmp)", 600, 50);
-    cout << "\n\n\t\t =============== CARO GAME MENU ===============";
-    cout << "\n\t\t\t     1. New Game";
-    cout << "\n\t\t\t     2. Load Game";
-    cout << "\n\t\t\t     3. About Game";
-    cout << "\n\t\t\t     4. Settings";
-    cout << "\n\t\t\t     5. Language";
-    cout << "\n\t\t\t     0. Exit";
-    cout << "\n\n\t\t ==============================================";
-    cout << "\n\n\t\t\t Enter your choice: ";
 
-    int choice;
-    cin >> choice;
-
-    if (choice == 5) {
-        system("cls");
-        cout << "\n\n\t\t =============== SELECT LANGUAGE ===============";
-        cout << "\n\t\t\t     1. English";
-        cout << "\n\t\t\t     2. Vietnamese";
-        cout << "\n\n\t\t ==============================================";
-        cout << "\n\n\t\t\t Enter your choice: ";
-
-        int* lang = &langChoice;
-        cin >> *lang;
-
-        if (langChoice == 1) {
-            //lang = 0;
-            cout << "\n\t\t You selected English.";
-            cout << "\n\t\t Press any key to return menu";
-        }
-        else if (langChoice == 2) {
-            //lang = 1;
-            cout << "\n\t\t Bạn đã chọn Tiếng Việt .";
-            cout << "\n\t\t Nhấn phím bắt kỳ để quay lại menu...";
-        }
-        else {
-            cout << "\n\t\t Invalid choice. Keeping current language.";
-        }
-
-        _getch();
-        return (langChoice == 1 ? showMainMenu() : hienMenuChinh());
+    vector<string> menuItems;
+    if (langChoice == 1) {
+        menuItems = { "NEW GAME", "LOAD GAME", "ABOUT", "SETTINGS", "LANGUAGE: ENGLISH", "EXIT" };
+    }
+    else {
+        menuItems = { "TRÒ CHƠI MỚI", "TẢI TRÒ CHƠI", "GIỚI THIỆU", "CÀI ĐẶT", "NGÔN NGỮ: TIẾNG VIỆT", "THOÁT" };
     }
 
-    return choice;
+    int totalItems = menuItems.size();
+    int selectedItem = 0;
+    int consoleWidth = 120; 
+    int boxWidth = 40;
+    int boxHeight = totalItems * 2 + 3;
+
+    int menuX = (consoleWidth - boxWidth) / 2;
+    int menuY = 12;
+    vector<string> logoLines = {
+        "  __  __   ______   _   _   _    _  ",
+        " |  \\/  | |  ____| | \\ | | | |  | | ",
+        " | \\  / | | |__    |  \\| | | |  | | ",
+        " | |\\/| | |  __|   | . ` | | |  | | ",
+        " | |  | | | |____  | |\\  | | |__| | ",
+        " |_|  |_| |______| |_| \\_|  \\____/  "
+    };
+    int logoWidth = 0;
+    for (const string& line : logoLines) {
+        if (line.length() > logoWidth) logoWidth = line.length();
+    }
+    int logoX = (consoleWidth - logoWidth) / 2;
+    int logoY = 4;
+    for (const string& line : logoLines) {
+        GotoXY(logoX, logoY++);
+        setColor(240 + 2); 
+        cout << line;
+    }
+    while (true) {
+        drawMenu(menuX, menuY, boxWidth, boxHeight);
+
+        for (int i = 0; i < totalItems; i++) {
+            int itemY = menuY + 2 + i * 2;
+            int textX = menuX + (boxWidth - (int)menuItems[i].length()) / 2;
+
+            if (i == selectedItem) {
+                string label = " >> " + menuItems[i] + " << ";
+                int labelX = menuX + (boxWidth - (int)label.length()) / 2;
+
+                GotoXY(labelX, itemY);
+                setColor(240 + 12); 
+                cout << label;
+            }
+            else {
+                GotoXY(textX, itemY);
+                setColor(240);
+                cout << menuItems[i];
+            }
+        }
+
+        int key = _getch();
+        if (key == 224) {
+            key = _getch();
+            if (key == 72) selectedItem--;
+            if (key == 80) selectedItem++;
+        }
+        else if (key == 'w' || key == 'W') selectedItem--;
+        else if (key == 's' || key == 'S') selectedItem++;
+        else if (key == 13) {
+            if (selectedItem == 4) {
+                langChoice = (langChoice == 1) ? 2 : 1;
+                return showMainMenu();
+            }
+            if (selectedItem == 5) return 0;
+            return selectedItem + 1;
+        }
+
+        if (selectedItem < 0) selectedItem = totalItems - 1;
+        if (selectedItem >= totalItems) selectedItem = 0;
+    }
 }
 
 int hienMenuChinh() {
-    system("cls");
-    cout << "\n\n\t\t =============== MENU TRO CHOI CARO ===============";
-    cout << "\n\t\t\t     1. Trò chơi mới";
-    cout << "\n\t\t\t     2. Tải trò chơi";
-    cout << "\n\t\t\t     3. Giới thiệu trò chơi";
-    cout << "\n\t\t\t     4. Cài đặt";
-    cout << "\n\t\t\t     5. Ngôn ngữ";
-    cout << "\n\t\t\t     0. Thoát";
-    cout << "\n\n\t\t ================================================";
-    cout << "\n\n\t\t\t Nhập lựa chọn của bạn: ";
-    int luaChon;
-    cin >> luaChon;
-
-    if (luaChon == 5) {
-        system("cls");
-        cout << "\n\n\t\t =============== CHỌN NGÔN NGỮ ===============";
-        cout << "\n\t\t\t     1. Tiếng Anh (English)";
-        cout << "\n\t\t\t     2. Tiếng Việt (Vietnamese)";
-        cout << "\n\n\t\t ============================================";
-        cout << "\n\n\t\t\t Nhập lựa chọn của bạn: ";
-
-        int* lang = &langChoice;
-        cin >> *lang;
-
-        if (langChoice == 1) {
-            //lang = 0;
-            cout << "\n\t\t You selected English.";
-            cout << "\n\t\t Press any key to return menu";
-        }
-        else if (langChoice == 2) {
-            //lang = 1;
-            cout << "\n\t\t Bạn đã chọn Tiếng Việt.";
-            cout << "\n\t\t Nhấn phím bất kì để quay lại menu...";
-        }
-        else {
-            cout << "\n\t\t Invalid choice. Keeping current language.";
-        }
-        _getch();
-        return (langChoice == 1 ? showMainMenu() : hienMenuChinh());
-    }
-
-    return luaChon;
+    return showMainMenu();
 }
 
 bool askContinue() {
@@ -436,7 +432,7 @@ void setConsoleFont() {
 void waitForMouseClick() {
 	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
     DWORD mode;
-	GetConsoleMode(hStdin, &mode); //lẤY CHẾ ĐỘ CONSOLE HIỆN TẠI
+	GetConsoleMode(hStdin, &mode); 
     SetConsoleMode(hStdin, (mode & ~ENABLE_QUICK_EDIT_MODE) | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS);
     FlushConsoleInputBuffer(hStdin);
     INPUT_RECORD irInBuf[128];
@@ -446,7 +442,7 @@ void waitForMouseClick() {
         for(DWORD i = 0; i < cNumRead; i++) {
             if (irInBuf[i].EventType == MOUSE_EVENT) {
                 if(irInBuf[i].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-                    SetConsoleMode(hStdin, mode); // KHÔI PHỤC LẠI CHẾ ĐỘ CONSOLE BAN ĐẦU
+                    SetConsoleMode(hStdin, mode); 
                     return;
 				}
             }
@@ -461,10 +457,11 @@ void waitForMouseClick() {
 }
 
 void printCentered(string text, int y, int color) {
-    int consoleWidth = 80;
+    int consoleWidth = 150; 
     int textLength = text.length();
-    int x = (consoleWidth - textLength) / 2; 
+    int x = (consoleWidth - textLength) / 2;
     if (x < 0) x = 0;
+
     GotoXY(x, y);
     setColor(color);
     cout << text;
@@ -472,7 +469,7 @@ void printCentered(string text, int y, int color) {
 
 void showSplashScreen() {
     system("cls");
-    setColor(240);
+    setColor(240); 
     string pixelLogo = R"(
  ██████╗ █████╗ ██████╗  ██████╗      ██████╗  █████╗ ███╗   ███╗███████╗
 ██╔════╝██╔══██╗██╔══██╗██╔═══██╗    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
@@ -483,20 +480,179 @@ void showSplashScreen() {
   )";
     stringstream ss(pixelLogo);
     string line;
-    int y = 5; 
+    int logoX = 5; 
+    int y = 5;
     while (getline(ss, line)) {
         if (line.length() > 0 && line.find_first_not_of(" \t\r\n") != string::npos) {
-            printCentered(line, y++, 240 + 9); 
+            GotoXY(logoX, y++);
+            setColor(240 + 9); 
+            cout << line;
         }
     }
-    int promptY = 20;
-    GotoXY(20, promptY);
+    int promptY = 15;
+    string msg1 = "Press any key to enter the game";
+    GotoXY(28, promptY);
     setColor(240 + 12); 
-    cout << "Ấn phím xuống để vào";
-    GotoXY(25, promptY + 2);
-    setColor(240 + 8);
-    cout << "Comming soon";
+    cout << msg1;
+    string myIntroArt = R"(
+   ██░▀██████████████▀░██
+　 █▌▒▒░████████████░▒▒▐█
+　 █░▒▒▒░██████████░▒▒▒░█
+　　▌░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▐
+　　░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░
+　 ███▀▀▀██▄▒▒▒▒▒▒▒▄██▀▀▀██
+　 ██░░░▐█░▀█▒▒▒▒▒█▀░█▌░░░█
+　 ▐▌░░░▐▄▌░▐▌▒▒▒▐▌░▐▄▌░░▐▌
+　　█░░░▐█▌░░▌▒▒▒▐░░▐█▌░░█
+　　▒▀▄▄▄█▄▄▄▌░▄░▐▄▄▄█▄▄▀▒
+　　░░░░░░░░░░└┴┘░░░░░░░░░
+　　██▄▄░░░░░░░░░░░░░░▄▄██
+　　████████▒▒▒▒▒▒████████
+　　█▀░░███▒▒░░▒░░▒▀██████
+　　█▒░███▒▒╖░░╥░░╓▒▐█████
+　　█▒░▀▀▀░░║░░║░░║░░█████
+　　██▄▄▄▄▀▀┴┴╚╧╧╝╧╧╝┴┴███
+　　██████████████████████
+    )";
+
+    stringstream ssArt(myIntroArt);
+    string lineArt;
+    int x = 80;
+    int artY = 5;
+
+    setColor(240 + 5); 
+
+    while (getline(ssArt, lineArt)) {
+        if (lineArt.length() == 0 && artY == 5) continue;
+        GotoXY(x, artY++);
+        cout << lineArt;
+    }
+
     waitForMouseClick();
     system("cls");
     setColor(240);
+}
+void drawMenu(int x, int y, int width, int height) {
+    setColor(240 + 8); 
+    for (int i = 0; i < height; i++) {
+        GotoXY(x, y + i);
+        for (int j = 0; j < width; j++) {
+            if (i == 0 && j == 0) cout << "\xE2\x95\x94";
+            else if (i == 0 && j == width - 1) cout << "\xE2\x95\x97"; 
+            else if (i == height - 1 && j == 0) cout << "\xE2\x95\x9A"; 
+            else if (i == height - 1 && j == width - 1) cout << "\xE2\x95\x9D"; 
+            else if (i == 0 || i == height - 1) cout << "\xE2\x95\x90"; 
+            else if (j == 0 || j == width - 1) cout << "\xE2\x95\x91"; 
+            else cout << " ";
+        }
+    }
+    setColor(240); 
+}
+static int currentArtIndex = 0;
+void randomizeSideImage() {
+    srand(time(0)); 
+    currentArtIndex = rand() % 5;
+}
+void drawRightSideImage() {
+    int x = 77;
+    int y = 2; 
+    vector<string> artCollection;
+    string art1 = R"(
+             ¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
+      ¶¶¶¶¶¶¶¶¶           ¶¶¶¶¶¶¶¶¶
+    ¶¶¶¶¶          ¶¶¶¶¶          ¶¶¶¶¶
+    ¶¶           ¶¶¶¶¶¶¶¶¶            ¶¶
+    ¶¶          ¶¶¶¶¶¶¶¶¶¶¶           ¶¶
+    ¶¶              ¶¶¶¶¶¶            ¶¶
+    ¶¶             ¶¶¶¶¶¶¶            ¶¶
+    ¶¶      ¶¶   ¶¶¶¶¶¶¶¶¶            ¶¶
+    ¶¶     ¶¶¶¶¶¶¶¶¶¶¶¶¶¶     ¶ ¶     ¶¶
+    ¶¶     ¶¶¶¶¶¶¶¶¶¶¶        ¶¶      ¶¶
+    ¶¶    ¶¶¶¶¶¶¶¶¶¶¶¶¶       ¶¶¶     ¶¶
+    ¶¶    ¶¶¶  ¶¶¶¶¶¶¶¶¶¶¶     ¶¶     ¶¶
+    ¶¶      ¶¶    ¶¶¶¶¶¶¶¶¶    ¶¶     ¶¶
+    ¶¶       ¶     ¶¶¶¶¶¶¶¶¶ ¶¶¶      ¶¶
+    ¶¶             ¶¶¶¶¶¶¶¶¶¶¶        ¶¶
+    ¶¶             ¶¶¶¶¶¶¶ ¶         ¶¶
+     ¶¶       ¶¶   ¶¶¶¶¶¶¶          ¶¶
+      ¶¶      ¶¶¶¶¶¶¶¶¶¶¶          ¶¶
+       ¶¶             ¶¶¶         ¶¶
+        ¶¶           ¶¶          ¶¶
+         ¶¶         ¶¶          ¶¶
+          ¶¶      ¶¶¶          ¶¶
+           ¶¶¶               ¶¶
+             ¶¶            ¶¶¶
+               ¶¶¶       ¶¶¶
+                 ¶¶¶  ¶¶¶
+                    ¶¶
+    )";
+    artCollection.push_back(art1);
+    string art2 = R"(
+               $$$$$$$$$$
+          $$$$$$$$$$$$$$$$$$$$
+       $$$$$$$$$$$$$$$$$$$$$$$$$$
+     $$$$$$$$$     $$       $$$$$$$
+    $$$$$$$        $$          $$$$$
+   $$$$$$          $$$           $$$$
+  $$$$$           $$$$            $$$$$
+ $$$$$            $$$$             $$$$
+$$$$$             $$$$$             $$$$
+$$$$             $$$$$$              $$$
+$$$$             $$$$$$              $$$$
+$$$$            $$$$$$$$$            $$$$
+$$$$          $$$$$$$$$$$$$          $$$$
+$$$$        $$$$$$$$$$$$$$$$$        $$$$
+$$$$      $$$$$$$$$  $$$$$$$$$$      $$$$
+$$$$$  $$$$$$$$          $$$$$$$$   $$$$
+ $$$$$$$$$$                  $$$$$$$$$$
+  $$$$$                           $$$$$
+  $$$$$$                         $$$$$
+    $$$$$$                     $$$$$$
+     $$$$$$$                 $$$$$$
+       $$$$$$$$$$       $$$$$$$$$
+         $$$$$$$$$$$$$$$$$$$$$$
+             $$$$$$$$$$$$$$
+    )";
+    artCollection.push_back(art2);
+    string art3 = R"(
+                   $ 
+                  $$$ 
+                $$$$$$$$ 
+              $$$$$$$$$$$$$ 
+           $$$$$$$$$$$$$$$$$$ 
+        $$$$$$$$$$$$$$$$$$$$$$$ 
+     $$$$$$$$$   $$$$$$$$$$$$$$$$$ 
+ $$$$$$$$$$$$$$$   $$$$$$$$$$$$$$$$$$ 
+$$$$$$$$$$$$$$$$$$ _____$$$$$$$$$$$$$$$$ 
+   $$$$$$$$$$$$$$$$$$       $$$$$$$$ 
+      $$$$$$$$$$$$$$$$$ 
+         $$$$$$$$$$$$$$$$$ 
+           $$$$$$$$$$$$$$$$$$ 
+              $$$$$$$$$$$$$$$$$ 
+    $$$$$$       $$$$$$$$$$$$$$$$$ 
+$$$$$$$$$$$$$$     $$$$$$$$$$$$$$$$$ 
+ $$$$$$$$$$$$$$$$$   $$$$$$$$$$$$$$$$ 
+    $$$$$$$$$$$$$$$$$   $$$$$$$$$$$ 
+       $$$$$$$$$$$$$$$$_$$$$$$$$ 
+         $$$$$$$$$$$$$$$$$$$$ 
+           $$$$$$$$$$$$$$$ 
+              $$$$$$$$$$ 
+                $$$$$$ 
+    )";
+    artCollection.push_back(art3);
+
+    if (currentArtIndex >= artCollection.size()) currentArtIndex = 0;
+
+    stringstream ss(artCollection[currentArtIndex]);
+    string line;
+    int currentY = y;
+
+    setColor(240 + 5);
+
+    while (getline(ss, line)) {
+        GotoXY(x, currentY++);
+        cout << line;
+    }
+
+    setColor(240); 
 }
