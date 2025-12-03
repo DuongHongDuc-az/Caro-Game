@@ -34,4 +34,5 @@ void drawMenu(int x, int y, int width, int height);
 void printCentered(std::string text, int y, int color);
 void drawRightSideImage();
 void randomizeSideImage();
+void drawSettingsArt();
 #endif

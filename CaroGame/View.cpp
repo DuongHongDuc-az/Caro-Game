@@ -16,18 +16,29 @@ int langChoice;
 int showSettingsMenu() {
     system("cls");
     setColor(240);
+    drawSettingsArt();
     AudioManager& audio = AudioManager::getInstance();
+    int leftX = 18;
+    int topY = 12;
+    GotoXY(leftX, topY);
+	setColor(240 + 9);
     cout << "\n\n\t\t =============== AUDIO SETTINGS ===============";
-
+    setColor(240);
+    GotoXY(leftX, topY + 3);
     cout << "\n\t\t\t 1. Toggle Mute (Currently: "
         << (audio.isMuted() ? "MUTED" : "ON") << ")";
-
+    GotoXY(leftX, topY + 5);
     cout << "\n\t\t\t 2. Decrease Volume";
+    GotoXY(leftX, topY + 6);
     cout << "\n\t\t\t 3. Increase Volume";
+    GotoXY(leftX, topY + 8);
     cout << "\n\n\t\t\t    Current Volume: " << audio.getVolumeLevel() << "%";
-
+    GotoXY(leftX, topY + 11);
     cout << "\n\n\t\t\t 0. Back to Main Menu";
+    setColor(240 + 9);
     cout << "\n\n\t\t ==============================================";
+    setColor(240);
+    GotoXY(leftX, topY + 14);
     cout << "\n\n\t\t\t Enter your choice: ";
 
     int choice;
@@ -37,19 +48,29 @@ int showSettingsMenu() {
 int showMenuSettings() {
     system("cls");
     setColor(240);
+    drawSettingsArt();
     AudioManager& audio = AudioManager::getInstance();
-
+    int leftX = 18;
+    int topY = 12;
+    GotoXY(leftX, topY);
+    setColor(240 + 9);
     cout << "\n\n\t\t =============== CÀI ĐẶT ÂM THANH ===============";
-
+    setColor(240);
+    GotoXY(leftX, topY + 3);
     cout << "\n\t\t\t 1. Bật/Tắt Âm (Hiện tại: "
         << (audio.isMuted() ? "TẮT" : "BÂT") << ")";
-
+    GotoXY(leftX, topY + 5);
     cout << "\n\t\t\t 2. Giảm Âm Lượng";
+    GotoXY(leftX, topY + 6);
     cout << "\n\t\t\t 3. Tăng Âm Lượng";
+    GotoXY(leftX, topY + 8);
     cout << "\n\n\t\t\t    Âm Lượng Hiện Tại: " << audio.getVolumeLevel() << "%";
-
+    GotoXY(leftX, topY + 11);
     cout << "\n\n\t\t\t 0. Quay lại Menu Chinh";
+    setColor(240 + 9);
     cout << "\n\n\t\t ================================================";
+    setColor(240);
+    GotoXY(leftX, topY + 14);
     cout << "\n\n\t\t\t Nhập lựa chọn cơ bản: ";
 
     int choice;
@@ -275,7 +296,7 @@ int showMainMenu() {
         menuItems = { "NEW GAME", "LOAD GAME", "ABOUT", "SETTINGS", "LANGUAGE: ENGLISH", "EXIT" };
     }
     else {
-        menuItems = { "TRÒ CHƠI MỚI", "TẢI TRÒ CHƠI", "GIỚI THIỆU", "CÀI ĐẶT", "NGÔN NGỮ: TIẾNG VIỆT", "THOÁT" };
+        menuItems = { "TRÒ CHƠI MỚI", "TẢI TRÒ CHƠI", "GIỚI THIỆU", "CÀI ĐẶT", "   NGÔN NGỮ: TIẾNG VIỆT", "THOÁT " };
     }
 
     int totalItems = menuItems.size();
@@ -648,6 +669,49 @@ $$$$$$$$$$$$$$     $$$$$$$$$$$$$$$$$
     int currentY = y;
 
     setColor(240 + 5);
+
+    while (getline(ss, line)) {
+        GotoXY(x, currentY++);
+        cout << line;
+    }
+
+    setColor(240); 
+}
+
+void drawSettingsArt() {
+    int x = 75; 
+    int y = 6;  
+    string art = R"(
+              ███     ███
+            ███████ ███████
+            ██░░░█████░░░██
+           ██░██░░███░██░░██
+           ██░██░░███░██░░██
+           ██░░░░░███░░░░░██
+           ███░░░█████░░░███
+          ███████████████████
+         ███████░░██░░████████
+        ███████████████████████
+       ██████▒▒▒▒▒▒▒▒▒▒▒▒▒██████
+       ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒▒▒░▒▒██
+       █▒░▒▒▒░▒▒▒▒▒░▒▒▒▒▒▒▒▒▒▒▒█
+      ██▒▒░░░▒▒░▒▒▒▒▒▒▒▒▒▒░░░▒▒██
+      ██▒░░█░░▒▒▒▒▒▒▒░▒▒▒░░█░░▒██
+     ███▒░░░██░░░░░░░░░░░██░░░▒███
+    █████▒▒░░░███████████░░░▒▒█████
+    █████ ▒▒▒░░░░░░░░░░░░░▒▒▒ █████
+     █████ ▒▒▒▒░░░░░░░░░▒▒▒▒ █████
+      ██████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒███████
+     █████████           ██████████
+    ███ ███                 ███ ████
+        ███                     ███
+    )";
+
+    stringstream ss(art);
+    string line;
+    int currentY = y;
+
+    setColor(240 + 3); 
 
     while (getline(ss, line)) {
         GotoXY(x, currentY++);
