@@ -1,4 +1,4 @@
-﻿#include "AudioManager.h"
+#include "AudioManager.h"
 #include <iostream>
 #include <vector>
 #include<limits>
@@ -194,10 +194,22 @@ void AudioManager::decreaseVolume() {
     updateAllSourceVolumes();
 }
 
+void AudioManager::setVolume(float volume) {
+    
+    if (volume < 0.0f) volume = 0.0f;
+    if (volume > 1.0f) volume = 1.0f;
+
+    m_globalVolume = volume;
+    if (m_isMuted && volume > 0.0f) {
+        m_isMuted = false;
+    }
+    updateAllSourceVolumes();
+}
+
 bool AudioManager::isMuted() const {
     return m_isMuted;
 }
 
-int AudioManager::getVolumeLevel() const {
+float AudioManager::getVolumeLevel() const {
     return static_cast<int>(m_globalVolume * 100);
 }
