@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string>
 #include <map>
 #include <AL/al.h>
@@ -21,8 +21,9 @@ public:
     void toggleMute();
     void increaseVolume();
     void decreaseVolume();
+    void setVolume(float percent);
     bool isMuted() const;
-    int getVolumeLevel() const;
+    float getVolumeLevel() const;
 
 private:
     AudioManager(); 
