@@ -41,9 +41,17 @@ int showSettingsMenu() {
     GotoXY(leftX, topY + 14);
     cout << "\n\n\t\t\t Enter your choice: ";
 
-    int choice;
-    cin >> choice;
-    return choice;
+    //int choice;
+    //cin >> choice;
+    //return choice;
+
+    while (true) {
+        if (_kbhit()) {
+            char c = _getch();
+
+            return c - '0';
+        }
+    }
 }
 int showMenuSettings() {
     system("cls");
