@@ -264,23 +264,23 @@ void clearMessage(int x, int y, int length) {
     for (int i = 0; i < length; ++i) std::cout << " ";
 }
 
-void showWinEffect(int player) {
+void showWinEffect(int result, int player) {
     int msg_x = LEFT + BOARD_SIZE * 4 + 5;
     int msg_y = TOP + 15;
     string message;
     int color = 240 + 14;
 
-    if (player == 1) {
+    if (result == 0) {
+        message = (langChoice == 1 ? "        DRAW!       " : "        Hòa!       ");
+        color = 14;
+    }
+    else if (player == 1) {
         message = (langChoice == 1 ? "   PLAYER X WINS!   " : "   NGƯOI CHƠI X THẮNG!   ");
         color = 240 + 12;
     }
-    else if (player == -1) {
+    else {
         message = (langChoice == 1 ? "   PLAYER O WINS!   " : "   NGƯỜI CHƠI 0 THẮNG!   ");
         color = 240 + 1;
-    }
-    else {
-        message = (langChoice == 1 ? "        DRAW!       " : "        Hòa!       ");
-        color = 14;
     }
 
     for (int i = 0; i < 3; ++i) {

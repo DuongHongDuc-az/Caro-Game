@@ -1,23 +1,20 @@
 #include "Model.h"
+#include "Evaluation.h"
 #include <fstream>
 #include <cstring>
-#include <vector>
-#include <utility>
 #include <ctime>
 #include <cstdio>
 #include <iostream>
 
-_POINT board[BOARD_SIZE][BOARD_SIZE];
+using namespace std;
+
+BOARD board(BOARD_SIZE, vector<_POINT>(BOARD_SIZE));
 int turn;
 int remains;
 Player player1;
 Player player2;
 std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
-
-static int crossX[BOARD_SIZE][BOARD_SIZE][2];
-static int crossY[BOARD_SIZE][BOARD_SIZE][2];
-static int vert[BOARD_SIZE][BOARD_SIZE][2];
-static int hori[BOARD_SIZE][BOARD_SIZE][2];
+_POINT tlB(11,11), brB(0,0);
 
 static bool changeData(const std::string& filenameOld, const std::string& filenameNew);
 
@@ -34,11 +31,6 @@ void resetData() {
             board[i][j].c = 0;
         }
     }
-
-    memset(crossX, 0, sizeof(crossX));
-    memset(crossY, 0, sizeof(crossY));
-    memset(vert, 0, sizeof(vert));
-    memset(hori, 0, sizeof(hori));
 }
 
 bool takeTurn(int pX, int pY) {
@@ -55,28 +47,23 @@ bool takeTurn(int pX, int pY) {
     return true;
 }
 
-int checkWin() {
-    if (remains == 0) return 0;
-    memset(crossX, 0, sizeof(crossX));
-    memset(crossY, 0, sizeof(crossY));
-    memset(vert, 0, sizeof(vert));
-    memset(hori, 0, sizeof(hori));
-
-    for (int i = 0; i < BOARD_SIZE; ++i) {
-        for (int j = 0; j < BOARD_SIZE; ++j) {
-            if (board[i][j].c == 0) continue;
-            int player_idx = (board[i][j].c == 1) ? 1 : 0;
-
-            hori[i][j][player_idx] = 1 + (j > 0 && board[i][j - 1].c == board[i][j].c ? hori[i][j - 1][player_idx] : 0);
-            vert[i][j][player_idx] = 1 + (i > 0 && board[i - 1][j].c == board[i][j].c ? vert[i - 1][j][player_idx] : 0);
-            crossX[i][j][player_idx] = 1 + (i > 0 && j > 0 && board[i - 1][j - 1].c == board[i][j].c ? crossX[i - 1][j - 1][player_idx] : 0);
-            crossY[i][j][player_idx] = 1 + (i > 0 && j < BOARD_SIZE - 1 && board[i - 1][j + 1].c == board[i][j].c ? crossY[i - 1][j + 1][player_idx] : 0);
-
-            if (hori[i][j][player_idx] >= 5 || vert[i][j][player_idx] >= 5 ||
-                crossX[i][j][player_idx] >= 5 || crossY[i][j][player_idx] >= 5) {
-                return board[i][j].c;
-            }
+int getGameState(BOARD& board, _POINT lastMove) {
+    //Return values: 0 - draw, 1 - Win, 2 - ongoing
+    function<int(_POINT&, int, int)> countConsecutive = [&](_POINT& move, int dX, int dY) {
+        int res = 0;
+        int x = move.x + dX, y = move.y + dY, z = move.c;
+        while (Evaluation::isValidCell(x, y) && board[x][y].c == z && res < 5) {
+            res++;
+            x += dX;
+            y += dY;
         }
+        return res;
+    };
+    if (remains == 0) return 0;
+    for (auto dir : Evaluation::direct) {
+        int res = countConsecutive(lastMove, dir.ff, dir.ss) + countConsecutive(lastMove, -dir.ff, -dir.ss) + 1;
+        if (res >= 5)
+            return 1;
     }
     return 2;
 }

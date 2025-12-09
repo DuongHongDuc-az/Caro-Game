@@ -18,7 +18,7 @@ void displayTimeOfFile(int infoX, int infoY);
 void showPlayerInfo();
 void displayMessage(const std::string& message, int x, int y);
 void clearMessage(int x, int y, int length);
-void showWinEffect(int player);
+void showWinEffect(int result, int player);
 int showMainMenu();
 int hienMenuChinh();
 bool askContinue();

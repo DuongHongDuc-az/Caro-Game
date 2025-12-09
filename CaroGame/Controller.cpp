@@ -8,6 +8,7 @@
 #include <iostream>
 static int cursorCol = 0;
 static int cursorRow = 0;
+static bool okToCheck = 0;
 
 static void moveCursor(int direction);
 static bool processInput();
@@ -16,7 +17,7 @@ static void handleSave();
 static void handleLoad(bool startFromMenu);
 static void handleRename();
 static void handleDelete();
-static void endGame(int result);
+static void endGame(int result, int player);
 static void redrawGameScreen();
 static void runGameLoop();
 
@@ -85,9 +86,13 @@ static void runGameLoop() {
     redrawGameScreen();
     while (!exitRequested) {
         exitRequested = processInput();
-        int result = checkWin();
+        int result = 2;
+        if (okToCheck) {
+            result = getGameState(board, _POINT{cursorRow, cursorCol, -turn});
+			okToCheck = 0;
+        }
         if (result != 2) {
-            endGame(result);
+            endGame(result,-turn);
             return;
         }
     }
@@ -142,6 +147,7 @@ static void handleTurn() {
         AudioManager::getInstance().playSound(SoundEffect::Move);
         int previous_turn = (turn == 1) ? -1 : 1;
         updateCellAtBoardIndex(cursorCol, cursorRow, previous_turn);
+		okToCheck = 1;
         showPlayerInfo();
         int screenX = LEFT + cursorCol * 4 + 2;
         int screenY = TOP + cursorRow * 2 + 1;
@@ -292,14 +298,14 @@ static void handleDelete() {
     GotoXY(screenX, screenY);
 }
 
-static void endGame(int result) {
+static void endGame(int result, int player) {
     if (result == 0) {
         AudioManager::getInstance().playSound(SoundEffect::Draw);
     }
     else {
         AudioManager::getInstance().playSound(SoundEffect::Win);
     }
-    showWinEffect(result);
+    showWinEffect(result, player);
     if (askContinue()) {
         resetData();
         runGameLoop();
