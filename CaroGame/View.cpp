@@ -378,6 +378,84 @@ int showMainMenu() {
     }
 }
 
+int showModeMenu(int type) {
+    system("cls");
+    setColor(240);
+
+    vector<string> menuItems;
+    if (langChoice == 1) {
+        menuItems = !type ? vector<string>{ "2 PLAYERS", "PLAY WITH BOT", "BACK" } : vector<string>{"EASY", "MEDIUM", "HARD", "BACK"};
+    }
+    else {
+        menuItems = !type ? vector<string>{ "2 NGƯỜI CHƠI", "CHƠI VỚI MÁY", "QUAY LẠI" } : vector<string>{"DỄ", "TRUNG BÌNH", "KHÓ", "QUAY LẠI"};
+    }
+
+    int totalItems = menuItems.size();
+    int selectedItem = 0;
+    int consoleWidth = 120; 
+    int boxWidth = 40;
+    int boxHeight = totalItems * 2 + 3;
+
+    int menuX = (consoleWidth - boxWidth) / 2;
+    int menuY = 12;
+    vector<string> logoLines = {
+        "  __  __   ______   _   _   _    _  ",
+        " |  \\/  | |  ____| | \\ | | | |  | | ",
+        " | \\  / | | |__    |  \\| | | |  | | ",
+        " | |\\/| | |  __|   | . ` | | |  | | ",
+        " | |  | | | |____  | |\\  | | |__| | ",
+        " |_|  |_| |______| |_| \\_|  \\____/  "
+    };
+    int logoWidth = 0;
+    for (const string& line : logoLines) {
+        if (line.length() > logoWidth) logoWidth = line.length();
+    }
+    int logoX = (consoleWidth - logoWidth) / 2;
+    int logoY = 4;
+    for (const string& line : logoLines) {
+        GotoXY(logoX, logoY++);
+        setColor(240 + 2); 
+        cout << line;
+    }
+    while (true) {
+        drawMenu(menuX, menuY, boxWidth, boxHeight);
+
+        for (int i = 0; i < totalItems; i++) {
+            int itemY = menuY + 2 + i * 2;
+            int textX = menuX + (boxWidth - (int)menuItems[i].length()) / 2;
+
+            if (i == selectedItem) {
+                string label = " >> " + menuItems[i] + " << ";
+                int labelX = menuX + (boxWidth - (int)label.length()) / 2;
+
+                GotoXY(labelX, itemY);
+                setColor(240 + 12); 
+                cout << label;
+            }
+            else {
+                GotoXY(textX, itemY);
+                setColor(240);
+                cout << menuItems[i];
+            }
+        }
+
+        int key = _getch();
+        if (key == 224) {
+            key = _getch();
+            if (key == 72) selectedItem--;
+            if (key == 80) selectedItem++;
+        }
+        else if (key == 'w' || key == 'W') selectedItem--;
+        else if (key == 's' || key == 'S') selectedItem++;
+        else if (key == 13) {
+            return selectedItem + 1;
+        }
+
+        if (selectedItem < 0) selectedItem = totalItems - 1;
+        if (selectedItem >= totalItems) selectedItem = 0;
+    }
+}
+
 int hienMenuChinh() {
     return showMainMenu();
 }

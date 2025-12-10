@@ -11,8 +11,8 @@ using std::pair;
 
 #define BOARD_SIZE 12
 #define MAXX 0xffffffffffffffffULL
-#define BOT_1 1
-#define BOT_2 -1
+#define BOT_1 -1
+#define BOT_2 1
 #define ff first
 #define ss second
 #define mp make_pair

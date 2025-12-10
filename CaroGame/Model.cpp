@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "AI.h"
 #include "Evaluation.h"
 #include <fstream>
 #include <cstring>
@@ -31,6 +32,13 @@ void resetData() {
             board[i][j].c = 0;
         }
     }
+}
+
+static inline void upBound(_POINT& tlB, _POINT& brB, int x, int y) {
+    optimize(tlB.x, x, 1);
+    optimize(tlB.y, y, 1);
+    optimize(brB.x, x);
+    optimize(brB.y, y);
 }
 
 bool takeTurn(int pX, int pY) {
@@ -169,6 +177,7 @@ static bool changeData(const std::string& filenameOld, const std::string& filena
     fold.close();
     remove(filenameOld.c_str());
     fnew.close();
+    return true;
 }
 
 bool renameGame(const std::string& filenameOld, const std::string& filenameNew) {

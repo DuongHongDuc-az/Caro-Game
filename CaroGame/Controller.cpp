@@ -1,6 +1,7 @@
 ﻿#include "Controller.h"
 #include "Model.h"
 #include "View.h"
+#include "AI.h"
 #include "AudioManager.h"
 #include <conio.h>
 #include <windows.h>
@@ -55,11 +56,28 @@ void run() {
     int choice = showMainMenu();
     while (true) {
         switch (choice) {
-        case 1:
-            randomizeSideImage();
-            resetData();
-            runGameLoop();
+        case 1: {
+            int modeChoice = showModeMenu();
+            switch (modeChoice) {
+                case 1:
+                    randomizeSideImage();
+                    resetData();
+                    runGameLoop();
+                    break;
+                case 2: {
+                    int diffChoice = showModeMenu(1);
+                    if (diffChoice < 4) DIFF = diffChoice;
+                    else break;
+                    randomizeSideImage();
+                    resetData();
+                    handleBotPlay();
+                    break;
+                }
+                case 3:
+                    break;
+            }
             break;
+        }
         case 2:
             handleLoad(true);
             break;
@@ -325,4 +343,46 @@ static void redrawGameScreen() {
     int screenX = LEFT + cursorCol * 4 + 2;
     int screenY = TOP + cursorRow * 2 + 1;
     GotoXY(screenX, screenY);
+}
+
+static inline void makeMove(int x, int y) {
+    AudioManager::getInstance().playSound(SoundEffect::Move);
+    board[x][y].c = turn;
+    turn = -turn;
+    cursorRow = x;
+    cursorCol = y;
+    --remains;
+    updateCellAtBoardIndex(cursorCol, cursorRow, -turn);
+    showPlayerInfo();
+    int screenX = LEFT + cursorCol * 4 + 2;
+    int screenY = TOP + cursorRow * 2 + 1;
+    GotoXY(screenX, screenY);
+}
+
+void handleBotPlay() {
+    AudioManager::getInstance().stopBackgroundMusic();
+    bool exitRequested = false;
+    redrawGameScreen();
+    while (!exitRequested) {
+        exitRequested = processInput();
+        int result = 2, ongoing = 1;
+        if (okToCheck) {
+            result = getGameState(board, _POINT{cursorRow, cursorCol, -turn});
+            ongoing = 0;
+            okToCheck = 0;
+        }
+        if (result != 2) {
+            endGame(result,-turn);
+            return;
+        }
+        if (!ongoing) {
+            pii botMove = getBestMove(board);
+            makeMove(botMove.ff, botMove.ss);
+            result = getGameState(board, _POINT{cursorRow, cursorCol, -turn});
+        }
+        if (result != 2) {
+            endGame(result,-turn);
+            return;
+        }
+    }
 }

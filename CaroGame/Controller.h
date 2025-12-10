@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-void run(); 
+void run();
+void handleBotPlay();
 
 #endif 

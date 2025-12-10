@@ -3,6 +3,8 @@
 
 using namespace std;
 
+int DIFF = 0;
+
 inline int change(int c) {
     if (c == -1) return 2;
     return c;

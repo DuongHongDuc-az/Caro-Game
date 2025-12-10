@@ -13,7 +13,7 @@ using namespace std;
 #define oo static_cast<int>(1e9+7)
 
 //Ez: 1, Med: 2, Hard: 3 
-int DIFF;
+extern int DIFF;
 
 typedef unsigned long long ULL;
 typedef pair<int, int> pii;
