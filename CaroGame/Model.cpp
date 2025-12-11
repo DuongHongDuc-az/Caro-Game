@@ -21,6 +21,9 @@ static bool changeData(const std::string& filenameOld, const std::string& filena
 
 void resetData() {
     turn = 1;
+    _POINT rtlB(11,11), rbrB(0,0);
+    swap(rtlB, tlB);
+    swap(rbrB, brB);
     remains = BOARD_SIZE * BOARD_SIZE;
     player1 = { "Player X", 0, 0 };
     player2 = { "Player O", 0, 0 };

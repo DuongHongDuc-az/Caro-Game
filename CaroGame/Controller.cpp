@@ -18,7 +18,7 @@ static void handleSave();
 static void handleLoad(bool startFromMenu);
 static void handleRename();
 static void handleDelete();
-static void endGame(int result, int player);
+static void endGame(int result, int player, int playWBot = 0);
 static void redrawGameScreen();
 static void runGameLoop();
 
@@ -57,24 +57,29 @@ void run() {
     while (true) {
         switch (choice) {
         case 1: {
-            int modeChoice = showModeMenu();
-            switch (modeChoice) {
-                case 1:
-                    randomizeSideImage();
-                    resetData();
-                    runGameLoop();
-                    break;
-                case 2: {
-                    int diffChoice = showModeMenu(1);
-                    if (diffChoice < 4) DIFF = diffChoice;
-                    else break;
-                    randomizeSideImage();
-                    resetData();
-                    handleBotPlay();
-                    break;
+            int done = 0;
+            while(!done) {
+                int modeChoice = showModeMenu();
+                switch (modeChoice) {
+                    case 1:
+                        randomizeSideImage();
+                        resetData();
+                        runGameLoop();
+                        break;
+                    case 2: {
+                        int diffChoice = showModeMenu(1);
+                        if (diffChoice < 4) DIFF = diffChoice;
+                        else break;
+                        randomizeSideImage();
+                        resetData();
+                        handleBotPlay();
+                        done = 1;
+                        break;
+                    }
+                    case 3:
+                        done = 1;
+                        break;
                 }
-                case 3:
-                    break;
             }
             break;
         }
@@ -160,8 +165,16 @@ static void moveCursor(int direction) {
     GotoXY(screenX, screenY);
 }
 
+static inline void upBound(int x, int y) {
+    optimize(tlB.x, x, 1);
+    optimize(tlB.y, y, 1);
+    optimize(brB.x, x);
+    optimize(brB.y, y);
+}
+
 static void handleTurn() {
     if (takeTurn(cursorCol, cursorRow)) {
+        upBound(cursorRow, cursorCol);
         AudioManager::getInstance().playSound(SoundEffect::Move);
         int previous_turn = (turn == 1) ? -1 : 1;
         updateCellAtBoardIndex(cursorCol, cursorRow, previous_turn);
@@ -316,7 +329,7 @@ static void handleDelete() {
     GotoXY(screenX, screenY);
 }
 
-static void endGame(int result, int player) {
+static void endGame(int result, int player, int playWBot) {
     if (result == 0) {
         AudioManager::getInstance().playSound(SoundEffect::Draw);
     }
@@ -326,7 +339,8 @@ static void endGame(int result, int player) {
     showWinEffect(result, player);
     if (askContinue()) {
         resetData();
-        runGameLoop();
+        if (!playWBot) runGameLoop();
+        else handleBotPlay();
     }
 }
 
@@ -352,11 +366,10 @@ static inline void makeMove(int x, int y) {
     cursorRow = x;
     cursorCol = y;
     --remains;
+    upBound(cursorRow, cursorCol);
+    player2.moves++;
     updateCellAtBoardIndex(cursorCol, cursorRow, -turn);
     showPlayerInfo();
-    int screenX = LEFT + cursorCol * 4 + 2;
-    int screenY = TOP + cursorRow * 2 + 1;
-    GotoXY(screenX, screenY);
 }
 
 void handleBotPlay() {
@@ -372,16 +385,22 @@ void handleBotPlay() {
             okToCheck = 0;
         }
         if (result != 2) {
-            endGame(result,-turn);
+            endGame(result,-turn,1);
             return;
         }
         if (!ongoing) {
+            int tmpX = cursorRow, tmpY = cursorCol;
             pii botMove = getBestMove(board);
             makeMove(botMove.ff, botMove.ss);
             result = getGameState(board, _POINT{cursorRow, cursorCol, -turn});
+            cursorRow = tmpX;
+            cursorCol = tmpY;
+            int screenX = LEFT + cursorCol * 4 + 2;
+            int screenY = TOP + cursorRow * 2 + 1;
+            GotoXY(screenX, screenY);
         }
         if (result != 2) {
-            endGame(result,-turn);
+            endGame(result,-turn,1);
             return;
         }
     }

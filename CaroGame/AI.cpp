@@ -53,7 +53,7 @@ int getNodePoint(BOARD& board, pii move, int player) {
     fto(i, -1, 1) {
         fto(j, -1, 1) {
             if (i != 0 || j != 0) {
-                res += iteratePoints(board, move, player, i, j, 1) + iteratePoints(board, move, player, i, j, 0);
+                res += iteratePoints(board, move, i, j, player, 1) + iteratePoints(board, move, i, j, player, 0);
             }
         }
     }
@@ -66,9 +66,11 @@ MoveQueue getMoveList(BOARD& board, _POINT& tlB, _POINT& brB, bool isMaximizingP
 
     fto(i, tlB.x, brB.x) {
         fto(j, tlB.y, brB.y) {
-            PsAction::pseuMove(board, i, j, player);
-            res.push(mp(mp(i, j), getNodePoint(board, mp(i, j), player)));
-            PsAction::undoMove(board, i, j);
+            if (board[i][j].c == 0) {
+                PsAction::pseuMove(board, i, j, player);
+                res.push(mp(mp(i, j), getNodePoint(board, mp(i, j), player)));
+                PsAction::undoMove(board, i, j);
+            }
         }
     }
     return res;
@@ -83,6 +85,8 @@ int minimax(BOARD& board, int depth, pii lastMove, int alpha, int beta, bool isM
     //Who has just taken the move
     int player = (!isMaximizingPlayer) ? BOT_1 : BOT_2;
     int gameState = getGameState(board, _POINT{lastMove.ff, lastMove.ss, player});
+    gameState++;
+    if (gameState > 2) gameState = 0;
     if (gameState != 0) {
         return (player == BOT_2) ? -MAX_SCORE * gameState : MAX_SCORE * gameState;
     }
@@ -114,9 +118,10 @@ int minimax(BOARD& board, int depth, pii lastMove, int alpha, int beta, bool isM
             hash.evalTable[hashKey] = curVal;
         }
         optimize(bestVal, curVal, !isMaximizingPlayer);
-        optimize(alpha, curVal, !isMaximizingPlayer);
+        if (isMaximizingPlayer) optimize(alpha, curVal, !isMaximizingPlayer);
+        else optimize(beta, curVal, !isMaximizingPlayer);
         PsAction::undoMove(board, move.ff, move.ss);
-        if (beta < alpha) break;
+        if (beta <= alpha) break;
         moveQueue.pop();
     }
     return bestVal;
@@ -131,7 +136,7 @@ pii getBestMove(BOARD& board) {
     int bestVal = -oo, alpha = -oo, beta = oo;
     pii res = { 0,0 };
     MoveQueue moveQueue = getMoveList(board, newtlB, newbrB, 1);
-    pii bestMove = moveQueue.top().ff;
+    if (!moveQueue.empty()) pii bestMove = moveQueue.top().ff;
     Hashing hash;
     srand(time(NULL));
     while (!moveQueue.empty()) {
@@ -160,7 +165,7 @@ pii getBestMove(BOARD& board) {
         }
         PsAction::undoMove(board, move.ff, move.ss);
         optimize(alpha, curVal);
-        if (beta < alpha) break;
+        if (beta <= alpha) break;
         moveQueue.pop();
     }
     return res;

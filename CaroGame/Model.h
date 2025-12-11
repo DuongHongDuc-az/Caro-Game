@@ -6,6 +6,8 @@
 #include <utility>
 #include <functional>
 
+#include <fstream>
+
 using std::vector;
 using std::pair;
 
