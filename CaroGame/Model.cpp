@@ -1,7 +1,7 @@
 #include "Model.h"
 #include "AI.h"
 #include "Evaluation.h"
-#include "giaoDien.h"
+#include "Interface.h"
 #include <fstream>
 #include <cstring>
 #include <ctime>
@@ -13,16 +13,22 @@
 using namespace std;
 
 BOARD board(BOARD_SIZE, vector<_POINT>(BOARD_SIZE));
+BOARD boardMini(BOARD_SIZE, vector<_POINT>(BOARD_SIZE));
 int turn;
+int turnMini;
 int remains;
+int remainsMini;
 Player player1;
 Player player2;
 std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
-_POINT tlB(11,11), brB(0,0);
-std::vector<std::wstring> nameOfFile;
 
-static bool changeData(const std::wstring& filenameOld, const std::wstring& filenameNew);
-static void saveTimeOfFile(std::wstring fileName);
+std::vector<std::string> nameOfFile;
+_POINT tlB(11,11), brB(0,0);
+
+static void saveTimeOfFile(std::string fileName);
+static int cs = (BOARD_SIZE) * 70;
+static float startX = (1500 - cs) / 2.0f;
+static float startY = (800 - cs) / 2.0f;
 
 void resetData() {
     turn = 1;
@@ -35,6 +41,7 @@ void resetData() {
 
     winText.setString("");
     continueText.setString("");
+    cursor.setPosition(sf::Vector2f({ startX + 22, startY + 11 }));
 
     for (int i = 0; i < BOARD_SIZE; ++i) {
         for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -43,6 +50,36 @@ void resetData() {
             board[i][j].c = 0;
         }
     }
+
+    std::ifstream nOF(L"name_of_file.txt");
+
+    int sizeNameOfFile = 0;
+
+    nOF >> sizeNameOfFile;
+    for (int i = 0; i < sizeNameOfFile; ++i) {
+        std::string ws;
+        int m = -1;
+
+        nOF >> m >> ws;
+        nameOfFile.push_back(ws);
+    }
+
+    nOF.close();
+
+    std::ifstream f(L"timeFile.txt");
+
+    int sizeTimeFile = 0;
+
+    f >> sizeTimeFile;
+    for (size_t i = 0; i < sizeTimeFile; ++i) {
+        std::string num, d, t;
+        int m = -1;
+
+        f >> num >> d >> t;
+        timeFl.push_back({num, {d, t}});
+    }
+
+    f.close();
 }
 
 static inline void upBound(_POINT& tlB, _POINT& brB, int x, int y) {
@@ -123,17 +160,14 @@ static void saveTimeOfFile(std::string fileName) {
     f.close();
 }
 
-bool saveGame(const std::wstring& filename) {
-    std::wofstream nOF(L"name_of_file.txt");
+bool saveGame(const std::string& filename) {
+    std::ofstream nOF(L"name_of_file.txt");
     if (!nOF.is_open()) return false;
 
     nameOfFile.push_back(filename);
     nOF << nameOfFile.size() << "\n";
-    for (size_t i = 0; i < nameOfFile.size(); ++i) {
-        std::wostringstream woss;
-
-        woss << (int)i << L" " << nameOfFile[i];
-        nOF << woss.str() << L"\n";
+    for (int i = 0; i < nameOfFile.size(); ++i) {
+        nOF << i << " " << nameOfFile[i] << "\n";
     }
 
     nOF.close();
@@ -161,25 +195,35 @@ bool saveGame(const std::wstring& filename) {
     return true;
 }
 
-bool loadGame(const std::wstring& filename) {
-    std::wifstream nOF(L"name_of_file.txt");
-    if (!nOF.is_open()) return false;
-
-    int sizeNameOfFile = 0;
+bool loadGame(const std::string& filename) {
     char p = '0';
+    if (nameOfFile.size() < 1) {
+        std::ifstream nOF(L"name_of_file.txt");
+        if (!nOF.is_open()) return false;
 
-    nOF >> sizeNameOfFile;
-    for (size_t i = 0; i < sizeNameOfFile; ++i) {
-        std::wstring ws;
-        int m = -1;
+        int sizeNameOfFile = 0;
 
-        nOF >> m >> ws;
-        nameOfFile.push_back(ws);
+        nOF >> sizeNameOfFile;
+        for (int i = 0; i < sizeNameOfFile; ++i) {
+            std::string ws;
+            int m = -1;
 
-        if (ws == filename) p = m + '0';
+            nOF >> m >> ws;
+            nameOfFile.push_back(ws);
+
+            if (ws == filename) p = m + '0';
+        }
+
+        nOF.close();
     }
-
-    nOF.close();
+    else {
+        for (int i = 0; i < nameOfFile.size(); ++i) {
+            if (nameOfFile[i] == filename) {
+                p = i + '0';
+                break;
+            }
+        }
+    }
 
     std::string s{ p };
 
@@ -207,68 +251,60 @@ bool loadGame(const std::wstring& filename) {
     return true;
 }
 
-static bool changeData(const std::string& filenameOld, const std::string& filenameNew) {
-    std::ifstream fold(filenameOld);
-    std::ofstream fnew(filenameNew);
-
-    if (!fold.is_open()) return false;
-
-    int turnFileOld, remainsFileOld, moves, wins;
-    int a[BOARD_SIZE][BOARD_SIZE];
-
-    if (!fold.is_open()) return false;
-    fold >> turnFileOld; fnew << turnFileOld << "\n";
-    fold >> remainsFileOld; fnew << remainsFileOld << "\n";
-    for (int i = 0; i < BOARD_SIZE; ++i) {
-        for (int j = 0; j < BOARD_SIZE; ++j) {
-            fold >> a[i][j];
-            fnew << a[i][j] << " ";
-        }
-        fnew << "\n";
-    }
-    fold.ignore();
-    std::string temp;
-    std::getline(fold, temp); fnew << temp << "\n";
-    fold >> moves; fnew << moves << "\n";
-    fold >> wins; fnew << wins << "\n";
-
-    fold.ignore();
-    std::getline(fold, temp); fnew << temp << "\n";
-    fold >> moves; fnew << moves << "\n";
-    fold >> wins; fnew << wins << "\n";
-
-    fold.close();
-    remove(filenameOld.c_str());
-    fnew.close();
-    return true;
-}
+//static bool changeData(const std::string& filenameOld, const std::string& filenameNew) {
+//    std::ifstream fold(filenameOld);
+//    std::ofstream fnew(filenameNew);
+//
+//    if (!fold.is_open()) return false;
+//
+//    int turnFileOld, remainsFileOld, moves, wins;
+//    int a[BOARD_SIZE][BOARD_SIZE];
+//
+//    if (!fold.is_open()) return false;
+//    fold >> turnFileOld; fnew << turnFileOld << "\n";
+//    fold >> remainsFileOld; fnew << remainsFileOld << "\n";
+//    for (int i = 0; i < BOARD_SIZE; ++i) {
+//        for (int j = 0; j < BOARD_SIZE; ++j) {
+//            fold >> a[i][j];
+//            fnew << a[i][j] << " ";
+//        }
+//        fnew << "\n";
+//    }
+//    fold.ignore();
+//    std::string temp;
+//    std::getline(fold, temp); fnew << temp << "\n";
+//    fold >> moves; fnew << moves << "\n";
+//    fold >> wins; fnew << wins << "\n";
+//
+//    fold.ignore();
+//    std::getline(fold, temp); fnew << temp << "\n";
+//    fold >> moves; fnew << moves << "\n";
+//    fold >> wins; fnew << wins << "\n";
+//
+//    fold.close();
+//    remove(filenameOld.c_str());
+//    fnew.close();
+//    return true;
+//}
 
 bool renameGame(const std::string& filenameOld, const std::string& filenameNew) {
-    std::ofstream f("timeFile.txt");
-
-    int tmpSize = timeFl.size();
-
     int flag = 0;
 
-    for (int i = 0; i < timeFl.size(); ++i) {
-        if (timeFl[i].first == filenameOld) {
-            if (!changeData(filenameOld, filenameNew)) break;
-
-            timeFl[i].first = filenameNew;
+    for (int i = 0; i < nameOfFile.size(); ++i) {
+        if (nameOfFile[i] == filenameOld) {
+            nameOfFile[i] = filenameNew;
             flag = 1;
             break;
         }
-    }
+    }    
 
-    if (flag != 1) {
-        f.close();
-        return false;
-    }
+    std::ofstream nOF("name_of_file.txt");
+    if (!nOF.is_open()) return false;
 
-    f << timeFl.size() << "\n";
-    for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].first << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
+    nOF << nameOfFile.size() << "\n";
+    for (int i = 0; i < nameOfFile.size(); ++i) nOF << i << " " << nameOfFile[i] << "\n";
 
-    f.close();
+    nOF.close();
 
     return true;
 }
@@ -309,37 +345,36 @@ bool renameGame(const std::string& filenameOld, const std::string& filenameNew) 
     //fnew.close();
 // }
 
-// bool renameGame(const std::wstring& filenameOld, const std::wstring& filenameNew) {
-    //std::ofstream f("timeFile.txt");
+bool deleteGame(int numfilename) {
+    char p = '0';
+    int tmp = nameOfFile.size();
 
-    //int tmpSize = timeFl.size();
+    if (numfilename >= 0 && numfilename < nameOfFile.size()) {
+        p = numfilename + '0';
+        string s{ p };
 
-    //int flag = 0;
+        nameOfFile.erase(nameOfFile.begin() + numfilename);
+        timeFl.erase(timeFl.begin() + numfilename);
+        remove(s.c_str());
+    }
 
-    //for (int i = 0; i < timeFl.size(); ++i) {
-    //    if (timeFl[i].first == filenameOld) {
-    //        if (!changeData(filenameOld, filenameNew)) break;
+    std::ofstream f("timeFile.txt");
+    std::ofstream nOF("name_of_file.txt");
 
-    //        timeFl[i].first = filenameNew;
-    //        flag = 1;
-    //        break;
-    //    }
-    //}
+    f << timeFl.size() << "\n";
+    nOF << nameOfFile.size() << "\n";
 
-    //if (flag != 1) {
-    //    f.close();
-    //    return false;
-    //}
+    for (int i = 0; i < nameOfFile.size(); ++i) {
+        f << i << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
+        nOF << i << " " << nameOfFile[i] << "\n";
+    }
 
-    //f << timeFl.size() << "\n";
-    //for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].first << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
+    f.close();
+    nOF.close();
 
-    //f.close();
+    if (tmp == nameOfFile.size()) return false;
+    return true;
 
-    // return true;
-// }
-
-bool deleteGame(const std::wstring& filename) {
     //std::ofstream f("timeFile.txt");
 
     //int tmpSize = timeFl.size();
@@ -359,7 +394,7 @@ bool deleteGame(const std::wstring& filename) {
 
     //f.close();
 
-    return true;
+    //return true;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -3,31 +3,35 @@
 #include "View.h"
 #include "AI.h"
 #include "AudioManager.h"
-#include "giaoDien.h"
+#include "Interface.h"
 // #include <conio.h>
 // #include <windows.h>
 #include <string>
 #include <iostream>
 
+int dKey = 0;
+int rKey = 0;
 int lKey = 0;
 int tKey = 0;
+int diffChoice = 0;
 
+static int bot = -1;
 static int pressL = 0;
 static int pressT = 0;
 static int cursorCol = 0;
 static int cursorRow = 0;
 static bool okToCheck = 0;
 static int statusOfGame = 0;
-static std::wstring inputString;
+static std::string inputString;
 
 static void moveCursor(int direction);
-static bool processInput(const sf::Event &event);
+static bool processInput(const sf::Event &event, int preMenu);
 static void handleTurn();
 void handleSave(const sf::Event &event);
 void handleLoad(bool startFromMenu, const sf::Event &event);
-static void handleRename();
-static void handleDelete();
-static void endGame(int result, int player, int playWBot = 0, const sf::Event &event);
+void handleRename(const sf::Event& event);
+void handleDelete();
+static void endGame(const sf::Event& event, int result, int player, int playWBot = 0);
 static void redrawGameScreen();
 static void runGameLoop(const sf::Event &event);
 
@@ -45,7 +49,7 @@ static void handleSettings()
     // int choice = (langChoice == 1) ? showSettingsMenu() : showMenuSettings();
     int choice = handleVol();
 
-    std::cout << choice << "\n";
+    //std::cout << choice << "\n";
 
     switch (choice)
     {
@@ -76,55 +80,107 @@ void run(const sf::Event &event)
 
     int choice = sMM;
     // while (true) {
-    switch (choice)
-    {
-    case 1:
-    {
-        currentMenu = 20;
-        int done = 0;
-        while (!done)
-        {
-            int modeChoice = showModeMenu();
-            switch (modeChoice)
-            {
-            case 1:
-                randomizeSideImage();
-                resetData();
-                runGameLoop();
-                break;
-            case 2:
-            {
-                int diffChoice = showModeMenu(1);
-                if (diffChoice < 4)
-                    DIFF = diffChoice;
-                else
-                    break;
-                randomizeSideImage();
-                resetData();
-                handleBotPlay();
-                done = 1;
-                break;
-            }
-            case 3:
-                done = 1;
-                break;
-            }
+    switch (choice) {
+    case 1: {
+        if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+            if (keyPressed->code == sf::Keyboard::Key::Space) currentMenu = 20;
+            if (keyPressed->code == sf::Keyboard::Key::Escape) currentMenu = 1;
         }
+        
+        //int done = 0;
+        //while (!done)
+        //{
+        //    int modeChoice = showModeMenu();
+        //    switch (modeChoice)
+        //    {
+        //    case 1:
+        //        randomizeSideImage();
+        //        resetData();
+        //        runGameLoop(event);
+        //        break;
+        //    case 2:
+        //    {
+                //int diffChoice = showModeMenu(1);
+        //        if (diffChoice < 4)
+        //            DIFF = diffChoice;
+        //        else
+        //            break;
+        //        randomizeSideImage();
+        //        resetData();
+        //        handleBotPlay(event);
+        //        done = 1;
+        //        break;
+        //    }
+        //    case 3:
+        //        done = 1;
+        //        break;
+        //    }
+        //}
         break;
     }
     case 2:
+    {
         currentMenu = 3;
         // handleLoad(true);
         break;
+    }
     case 21:
-        currentMenu = 21;
+    {
+        if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+            if (currentMenu == 20 && keyPressed->code == sf::Keyboard::Key::Space) {
+                currentMenu = 21;
+                //sMM = 211;
+            }
+        }
+
+        //int diffChoice = 0;
+
+        if (0 < diffChoice && diffChoice < 4) DIFF = diffChoice;
+        else break;
+        //        randomizeSideImage();
+        if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+            if (currentMenu == 21 && keyPressed->code == sf::Keyboard::Key::Space) {
+                currentMenu = 22;
+                sMM = 211;
+            }
+        }
+        //resetData();
+        //handleBotPlay(event);
+
+        //done = 1;
+//        break;
+//    }
+//    case 3:
+//        done = 1;
         break;
-    case 22:
-        currentMenu = 22;
+    }
+    case 211: {
         ++statusOfGame;
-        // randomizeSideImage();
 
         if (statusOfGame == 1)
+        {
+            resetData();
+        }
+        else
+            statusOfGame = 2;
+        handleBotPlay(event); 
+
+        break;
+    }
+    case 22:
+    {
+        if (loadFromMenu == 1) {
+            if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+                if (keyPressed->code == sf::Keyboard::Key::L) {
+                    currentMenu = 22;
+                }
+            }
+        }
+        else currentMenu = 22;
+
+        ++statusOfGame;
+        // randomizeSideImage();
+        if (statusOfGame == 1 && loadFromMenu != 1)
         {
             resetData();
         }
@@ -133,18 +189,30 @@ void run(const sf::Event &event)
 
         runGameLoop(event);
         break;
+    }
     case 3:
+    {
         currentMenu = 4;
         // showAbout();
         break;
+    }
+    case 32:
+    {
+        currentMenu = 22;
+        runGameLoop(event);
+        break;
+    }
     case 4:
+    {
         currentMenu = 5;
         handleSettings();
         break;
+    }
     case 0:
+    {
         currentMenu = -1;
-        colorBackGround = sf::Color::Yellow;
         return;
+    }
     default:
         break;
     }
@@ -168,7 +236,8 @@ static void runGameLoop(const sf::Event &event)
 
     // while (!exitRequested) {
     // exitRequested =
-    processInput();
+     
+    processInput(event, 20);
     int result = 2;
     if (okToCheck)
     {
@@ -177,9 +246,10 @@ static void runGameLoop(const sf::Event &event)
     }
     if (result != 2)
     {
-        endGame(result, -turn);
+        endGame(event, result, -turn);
         return;
     }
+     
     //}
 }
 
@@ -235,39 +305,54 @@ static void runGameLoop(const sf::Event &event)
 /*   return false;
 }*/
 
-static bool processInput(const sf::Event &event)
+static bool processInput(const sf::Event &event, int preMenu)
 {
     if (currentMenu == 22)
     {
-        if (isKeyDown(Key::Up) && lKey != 1 && tKey != 1)
+        //std::cout << lKey << " " << tKey << "\n";
+        if (isKeyDown(Key::Up) && lKey == 0 && tKey == 0)
             moveCursor(0);
-        if (isKeyDown(Key::Down) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::Down) && lKey == 0 && tKey == 0)
             moveCursor(1);
-        if (isKeyDown(Key::Left) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::Left) && lKey == 0 && tKey == 0)
             moveCursor(2);
-        if (isKeyDown(Key::Right) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::Right) && lKey == 0 && tKey == 0)
             moveCursor(3);
 
-        if (isKeyDown(Key::W) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::W) && lKey == 0 && tKey == 0)
             moveCursor(0);
-        if (isKeyDown(Key::S) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::S) && lKey == 0 && tKey == 0)
             moveCursor(1);
-        if (isKeyDown(Key::A) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::A) && lKey == 0 && tKey == 0)
             moveCursor(2);
-        if (isKeyDown(Key::D) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::D) && lKey == 0 && tKey == 0)
             moveCursor(3);
 
-        if (isKeyDown(Key::Enter) && lKey != 1 && tKey != 1)
+        if (isKeyDown(Key::Enter) && lKey == 0 && tKey == 0)
             handleTurn();
 
-        if (isKeyDown(Key::L))
-            lKey = 1;
-        if (isKeyDown(Key::T))
+        //if (isKeyDown(Key::L) && tKey == 0)
+            if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+                if (lKey == 0 && keyPressed->code == sf::Keyboard::Key::L) lKey = 1;
+            }
+        if (isKeyDown(Key::T) && lKey == 0)
             tKey = 1;
 
-        if (isKeyDown(Key::Escape))
-            return true;
+        //if (isKeyDown(Key::Escape)) {
+            if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+                {
+                    if (keyPressed->code == sf::Keyboard::Key::Escape) {
+                        currentMenu = preMenu;
+                        sMM = preMenu;
+                        return true;
+                    }
+                }
+                
+            }            
+            
+        //}
     }
+
     return false;
 }
 
@@ -328,92 +413,139 @@ static void handleTurn()
 
 void handleSave(const sf::Event &event)
 {
+    showInputText(1, event);
+    drawRec = 1;
     // int msg_x = LEFT + BOARD_SIZE * 4 + 5;
     // int msg_y = TOP + 12 + (timeFl.size() > 0 ? timeFl.size() + 1 + 2 : 2);
     // int msg_y = TOP + 12;
-    int msg_x = LEFT + BOARD_SIZE * 4 + 5;
-    int msg_y = TOP + 200;
+    //int msg_x = LEFT + BOARD_SIZE * 4 + 5;
+    //int msg_y = TOP + 200;
 
     // GotoXY(msg_x, msg_y);
     // langChoice == 1 ? std::cout << "Enter the file name to save (Maxium 10 character): " : std::cout << "Nhập tên file muốn lưu tối đa 10 kí tự: ";
     // std::cin >> filename;
 
-    saveText.setFillColor(sf::Color::Black);
-    saveText.setString(langChoice == 1 ? "Enter the file name to save (Maxium 10 character): " : "Nhập tên file muốn lưu tối đa 10 kí tự: ");
-    saveText.setPosition(sf::Vector2f({(float)msg_x, (float)msg_y}));
+    //saveText.setFillColor(sf::Color::White);
+    //saveText.setString(langChoice == 1 ? "Enter the file name to save (Maxium 10 character): " : "Nhập tên file muốn lưu tối đa 10 kí tự: ");
+    //saveText.setPosition(sf::Vector2f({(float)msg_x, (float)msg_y}));
     // clearMessage(msg_x, msg_y, 60);
 
-    inputText.setFillColor(sf::Color::Blue);
-    inputText.setPosition(sf::Vector2f({(float)msg_x, (float)TOP + 250}));
-    int res = -1;
+    //inputText.setFillColor(sf::Color::Blue);
+    //inputText.setPosition(sf::Vector2f({(float)msg_x, (float)TOP + 250}));
+    //if (const sf::Event::TextEntered *textEventData = event.getIf<sf::Event::TextEntered>())
+    //{
+    //    uint32_t unicode = textEventData->unicode;
 
-    if (const sf::Event::TextEntered *textEventData = event.getIf<sf::Event::TextEntered>())
-    {
-        uint32_t unicode = textEventData->unicode;
-
-        if (unicode == 8)
-        {
-            if (!inputString.empty())
-                inputString.pop_back();
-        }
-        else if (unicode == 13)
-        {
-            res = saveGame(inputString);
-            lKey = 0;
-            pressL = 0;
-        }
-        else if (unicode >= 32 && unicode != 127)
-        {
-            ++pressL;
-            if (pressL != 1 && inputString.length() < 11)
-            {
-                inputString += static_cast<wchar_t>(unicode);
-                pressL = 2;
-            }
-        }
-        inputText.setString(inputString);
-    }
+    //    if (unicode == 8)
+    //    {
+    //        if (!inputString.empty())
+    //            inputString.pop_back();
+    //    }
+    //    else if (unicode == 13)
+    //    {
+    //        res = saveGame(inputString);
+    //        lKey = 0;
+    //        pressL = 0;
+    //    }
+    //    else if (unicode >= 32 && unicode != 127)
+    //    {
+    //        ++pressL;
+    //        if (pressL != 1 && inputString.length() < 11)
+    //        {
+    //            inputString += static_cast<char>(unicode);
+    //            pressL = 2;
+    //        }
+    //    }
+    //    inputText.setString(inputString);
+    //}
 
     // int infoX = LEFT + BOARD_SIZE * 4 + 5;
     // int infoY = TOP + 2;
 
-    if (res == 1)
-    {
+    //if (res == 1)
+    //{
         // GotoXY(infoX, infoY + 9);
         // displayTimeOfFile(infoX, infoY + 9);
         // GotoXY(infoX, infoY + (timeFl.size() > 0 ? (timeFl.size() + 10) : 10));
         // std::cout << "                 ";
         // GotoXY(infoX, infoY + (timeFl.size() > 0 ? (timeFl.size() + 11) : 11));
         // langChoice == 1 ? std::cout << "Esc: Exit to Menu" : std::cout << "Esc: Thoát Menu";
+        //for (size_t i = 0; i < nameOfFile.size(); ++i)
+        //    nameFile.setString(nameOfFile[i]);
 
-        nameFile.setFillColor(sf::Color::Green);
-        nameFile.setPosition(sf::Vector2f({(float)msg_x, (float)msg_y}));
-        for (size_t i = 0; i < nameOfFile.size(); ++i)
-            nameFile.setString(nameOfFile[i]);
-
-        inputText.setString("");
-        saveText.setString("");
-        inputString = L"";
-    }
-    else if (res == 0)
-    {
+        //inputText.setString("");
+        //saveText.setString("");
+        //inputString = "";
+    //}
+    //else if (res == 0)
+    //{
         // langChoice == 1 ? displayMessage("Save failed!", msg_x, msg_y) : displayMessage("Lưu thất bại!", msg_x, msg_y);
         // Sleep(1000);
         // clearMessage(msg_x, msg_y, 30);
 
-        inputText.setString("");
-        saveText.setString("");
-        inputString = L"";
-    }
+    //    inputText.setString("");
+    //    saveText.setString("");
+    //    inputString = "";
+    //}
     // int screenX = LEFT + cursorCol * 4 + 2;
     // int screenY = TOP + cursorRow * 2 + 1;
     // GotoXY(screenX, screenY);
+}
+
+int handleLoadMiniBoard(size_t num) {
+    char p = '0';
+
+    if (nameOfFile.size() < 1) {
+        std::ifstream nOF(L"name_of_file.txt");
+        if (!nOF.is_open()) return 0;
+
+        int sizeNameOfFile = 0;
+
+        nOF >> sizeNameOfFile;
+        for (int i = 0; i < sizeNameOfFile; ++i) {
+            std::string ws;
+            int m = -1;
+
+            nOF >> m >> ws;
+            nameOfFile.push_back(ws);
+
+            if (ws == nameOfFile[num]) p = m + '0';
+        }
+
+        nOF.close();
+    }
+    else {
+        for (int i = 0; i < nameOfFile.size(); ++i) {
+            if (nameOfFile[i] == nameOfFile[num]) {
+                p = i + '0';
+                break;
+            }
+        }
+    }
+
+    std::string s{ p };
+
+    std::ifstream f(s);
+    if (!f.is_open()) return 0;
+
+    f >> turnMini;
+    f >> remainsMini;
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            f >> boardMini[i][j].c;
+        }
+    }
+
+    f.close();
+    
+    return 1;
 }
 
 void handleLoad(bool startFromMenu, const sf::Event &event)
 {
     int msg_x = LEFT + BOARD_SIZE * 4 + 5;
     int msg_y = TOP + 200;
+
     // if (startFromMenu) system("cls");
 
     // GotoXY(msg_x, msg_y);
@@ -438,67 +570,83 @@ void handleLoad(bool startFromMenu, const sf::Event &event)
     //     int screenY = TOP + cursorRow * 2 + 1;
     //     GotoXY(screenX, screenY);
     // }
+    //wstring titleText = (langChoice == 1 ? L"LOAD GAME" : L"TẢI TRÒ CHƠI");
 
-    loadText.setFillColor(sf::Color::Black);
-    loadText.setString(langChoice == 1 ? "Enter the file name to load (Maxium 10 character): " : "Nhập tên file muốn tải tối đa 10 kí tự: ");
-    loadText.setPosition(sf::Vector2f({(float)msg_x, (float)msg_y}));
-    // clearMessage(msg_x, msg_y, 60);
+    //sf::FloatRect bounds = titleLoad.getLocalBounds();
 
-    inputText.setFillColor(sf::Color::Blue);
-    inputText.setPosition(sf::Vector2f({(float)msg_x, (float)TOP + 250}));
-    int res = -1;
+    //titleLoad.setOrigin(bounds.getCenter());
+    //titleLoad.setPosition(sf::Vector2f({ WINDOW_W / 2, OPAREC_Y - titleLoad.getCharacterSize() / 2 }));
+    //titleLoad.setString(titleText);
+    //titleLoad.setFillColor(sf::Color::Red);
 
-    if (const sf::Event::TextEntered *textEventData = event.getIf<sf::Event::TextEntered>())
-    {
-        uint32_t unicode = textEventData->unicode;
+    //loadText.setFillColor(sf::Color::White);
+    //if (!startFromMenu) loadText.setString(langChoice == 1 ? "Enter the file name to load (Maxium 10 character): " : "Nhập tên file muốn tải tối đa 10 kí tự: ");
+    //loadText.setPosition(sf::Vector2f({(float)msg_x, (float)msg_y}));
+    //// clearMessage(msg_x, msg_y, 60);
 
-        if (unicode == 8)
-        {
-            if (!inputString.empty())
-                inputString.pop_back();
-        }
-        else if (unicode == 13)
-        {
-            res = loadGame(inputString);
-            inputString = L"";
-            tKey = 0;
-            pressT = 0;
-        }
-        else if (unicode >= 32 && unicode != 127)
-        {
-            ++pressT;
-            if (pressT != 1 && inputString.length() < 11)
-            {
-                inputString += static_cast<wchar_t>(unicode);
-                pressT = 2;
-            }
-        }
-        inputText.setString(inputString);
-    }
+    //inputText.setFillColor(sf::Color::Blue);
+    //inputText.setPosition(sf::Vector2f({(float)msg_x, (float)TOP + 250}));
+    //int res = -1;
 
-    if (res)
-    {
-        if (startFromMenu)
-        {
-            inputText.setString("");
-            loadText.setString("");
-            inputString = L"";
+    //if (const sf::Event::TextEntered *textEventData = event.getIf<sf::Event::TextEntered>())
+    //{
+    //    uint32_t unicode = textEventData->unicode;
 
-            runGameLoop(event);
-        }
-        else
-        {
-            inputText.setString("");
-            loadText.setString("");
-            inputString = L"";
+    //    if (unicode == 8)
+    //    {
+    //        if (!inputString.empty())
+    //            inputString.pop_back();
+    //    }
+    //    else if (unicode == 13 || (unicode == 76 && startFromMenu == 1))
+    //    {
+    //        if (unicode == 13) {
+    //            res = loadGame(inputString);
+    //            inputString = "";
+    //            tKey = 0;
+    //            pressT = 0;
+    //        }
+    //        else {
 
-            redrawGameScreen();
-        }
-    }
+    //        }
+    //    }
+    //    else if (unicode >= 32 && unicode != 127)
+    //    {
+    //        ++pressT;
+    //        if ((pressT != 1 || startFromMenu == 1)  && inputString.length() < 11)
+    //        {
+    //            inputString += static_cast<char>(unicode);
+    //            pressT = 2;
+    //        }
+    //    }
+    //    inputText.setString(inputString);
+    //}
+
+    //if (res == 1) {
+    //    if (startFromMenu)
+    //    {
+    //        inputText.setString("");
+    //        loadText.setString("");
+    //        inputString = "";
+    //        cursor.setString(turn == 1 ? "X" : "O");
+    //        //Can chinh them khi playing with bot
+    //        sMM = 32;
+
+    //        //runGameLoop(event);
+    //    }
+    //    else
+    //    {
+    //        inputText.setString("");
+    //        loadText.setString("");
+    //        inputString = "";
+
+    //        redrawGameScreen();
+    //    }
+    //}
 }
 
-static void handleRename()
+void handleRename(const sf::Event& event)
 {
+    showInputText(3, event);
     // int msg_x = LEFT + BOARD_SIZE * 4 + 5;
     // int msg_y = TOP + 12 + (timeFl.size() > 0 ? timeFl.size() + 1 + 2 : 2);
 
@@ -539,8 +687,11 @@ static void handleRename()
     // GotoXY(screenX, screenY);
 }
 
-static void handleDelete()
+void handleDelete()
 {
+    deleteGame(delFile);
+    dKey = 0;
+    //colorBackGround = sf::Color::Cyan;
     // int msg_x = LEFT + BOARD_SIZE * 4 + 5;
     // int msg_y = TOP + 12 + (timeFl.size() > 0 ? timeFl.size() + 1 + 2 : 2);
 
@@ -577,7 +728,7 @@ static void handleDelete()
     // GotoXY(screenX, screenY);
 }
 
-static void endGame(int result, int player, int playWBot, const sf::Event &event)
+static void endGame(const sf::Event& event, int result, int player, int playWBot)
 {
 
     if (result == 0)
@@ -589,14 +740,15 @@ static void endGame(int result, int player, int playWBot, const sf::Event &event
         AudioManager::getInstance().playSound(SoundEffect::Win);
     }
     showWinEffect(result, player);
-    if (askContinue())
-    {
-        resetData();
-        if (!playWBot)
-            runGameLoop();
-        else
-            handleBotPlay();
-    }
+    bot = playWBot;
+    //if (askCon == 1)
+    //{
+    //    resetData();
+    //    if (!playWBot)
+    //        runGameLoop(event);
+    //    else
+    //        handleBotPlay(event);
+    //}
 }
 
 static void redrawGameScreen()
@@ -632,14 +784,16 @@ static inline void makeMove(int x, int y)
     showPlayerInfo();
 }
 
-void handleBotPlay()
+void handleBotPlay(const sf::Event& event)
 {
-    AudioManager::getInstance().stopBackgroundMusic();
+    //AudioManager::getInstance().stopBackgroundMusic();
     bool exitRequested = false;
-    redrawGameScreen();
-    while (!exitRequested)
-    {
-        exitRequested = processInput();
+    //colorBackGround = sf::Color::Green;
+    //redrawGameScreen();
+    //while (!exitRequested)
+    //{
+        //exitRequested = 
+        processInput(event, 21);
         int result = 2, ongoing = 1;
         if (okToCheck)
         {
@@ -649,7 +803,7 @@ void handleBotPlay()
         }
         if (result != 2)
         {
-            endGame(result, -turn, 1);
+            endGame(event, result, -turn, 1);
             return;
         }
         if (!ongoing)
@@ -666,8 +820,22 @@ void handleBotPlay()
         }
         if (result != 2)
         {
-            endGame(result, -turn, 1);
+            endGame(event, result, -turn, 1);
             return;
         }
+    //}
+}
+
+void ansContinue(const sf::Event &event) {
+    if (askCon == 1)
+    {
+        res = -1;
+        askCon = 0;
+        //colorBackGround = sf::Color::Magenta;
+        resetData();
+        if (!bot)
+            runGameLoop(event);
+        else
+            handleBotPlay(event);
     }
 }

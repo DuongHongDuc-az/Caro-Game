@@ -3,7 +3,7 @@
 #include <windows.h>
 #include "View.h"
 #include <iostream>
-#include "giaoDien.h"
+#include "Interface.h"
 int main() {
     //fixConsoleWindow();
     //system("pause");

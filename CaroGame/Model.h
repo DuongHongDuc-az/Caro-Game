@@ -11,7 +11,7 @@
 using std::pair;
 using std::vector;
 
-#define BOARD_SIZE 12
+#define BOARD_SIZE 10
 #define MAXX 0xffffffffffffffffULL
 #define BOT_1 -1
 #define BOT_2 1
@@ -53,21 +53,23 @@ struct Player
 };
 
 extern BOARD board;
+extern BOARD boardMini;
 extern int turn;
+extern int turnMini;
 extern int remains;
+extern int remainsMini;
 extern Player player1, player2;
 extern std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
 extern _POINT tlB, brB;
-extern std::vector<std::wstring> nameOfFile;
+extern std::vector<std::string> nameOfFile;
 
 void resetData();
 bool takeTurn(int pX, int pY);
 int getGameState(BOARD &board, _POINT lastMove);
-std::string getCurrentTime();
-bool saveGame(const std::wstring &filename);
-bool loadGame(const std::wstring &filename);
-bool renameGame(const std::wstring &filenameOld, const std::wstring &filenameNew);
-bool deleteGame(const std::wstring &filename);
+bool saveGame(const std::string &filename);
+bool loadGame(const std::string &filename);
+bool renameGame(const std::string &filenameOld, const std::string &filenameNew);
+bool deleteGame(int numfilename);
 
 _POINT getPointAt(int x, int y);
 
