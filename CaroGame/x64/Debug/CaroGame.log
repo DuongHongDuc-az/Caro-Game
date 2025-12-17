@@ -1,7 +1,4 @@
-﻿  View.cpp
-C:\Users\ACER\source\repos\CaroGame\CaroGame\View.cpp(241,25): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\ACER\source\repos\CaroGame\CaroGame\View.cpp(302,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\ACER\source\repos\CaroGame\CaroGame\View.cpp(320,63): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\ACER\source\repos\CaroGame\CaroGame\View.cpp(482,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\ACER\source\repos\CaroGame\CaroGame\View.cpp(574,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  CaroGame.vcxproj -> C:\Users\ACER\source\repos\CaroGame\x64\Debug\CaroGame.exe
+﻿  Controller.cpp
+E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\Controller.cpp(229,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\Controller.cpp(230,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  CaroGame.vcxproj -> E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\x64\Debug\CaroGame.exe

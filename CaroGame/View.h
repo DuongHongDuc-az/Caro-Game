@@ -3,11 +3,16 @@
 
 #include "Model.h"
 #include <string>
-#include<windows.h>
+#include <windows.h>
 #define LEFT 3
 #define TOP 1
 
 extern int langChoice;
+extern int sMM;
+extern int cs;
+extern float startX;
+extern float startY;
+
 void fixConsoleWindow();
 void GotoXY(int x, int y);
 void setColor(int color);
@@ -16,18 +21,19 @@ void updateCellAtScreen(int screenX, int screenY, int player);
 void updateCellAtBoardIndex(int col, int row, int player);
 void displayTimeOfFile(int infoX, int infoY);
 void showPlayerInfo();
-void displayMessage(const std::string& message, int x, int y);
+void displayMessage(const std::string &message, int x, int y);
 void clearMessage(int x, int y, int length);
 void showWinEffect(int result, int player);
 int showMainMenu();
 int showModeMenu(int type = 0);
 int hienMenuChinh();
 bool askContinue();
-std::string getFileNameFromUser(const std::string& prompt, int x, int y);
+std::string getFileNameFromUser(const std::string &prompt, int x, int y);
 void showAbout();
-void thongTin();
-int showSettingsMenu();
+int handleVol();
+void showSettingsMenu();
 int showMenuSettings();
+void showPlayerMenu();
 void setConsoleFont();
 void waitForMouseClick();
 void showSplashScreen();
@@ -36,4 +42,5 @@ void printCentered(std::string text, int y, int color);
 void drawRightSideImage();
 void randomizeSideImage();
 void drawSettingsArt();
+
 #endif
