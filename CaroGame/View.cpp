@@ -529,12 +529,12 @@ void displayListOfFile() {
         for (const auto& line : drawBoard) window.draw(line);
     }
  else {
-     sf::Text text(font, "No file has been saved", 30);
+     sf::Text text(font, "No files saved yet", 30);
      sf::FloatRect bounds = text.getLocalBounds();
 
      text.setOrigin(bounds.getCenter());
      text.setFillColor(sf::Color::White);
-     text.setPosition(sf::Vector2f({WINDOW_W / 2, WINDOW_H / 2}));
+     text.setPosition(sf::Vector2f({WINDOW_W / 2, WINDOW_H / 2 + 50}));
 
      window.draw(text);
     }
