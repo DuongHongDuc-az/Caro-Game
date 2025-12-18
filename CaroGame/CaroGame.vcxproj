@@ -19,18 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="giaoDien.cpp" />
+    <ClCompile Include="Evaluation.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="giaoDien.h" />
+    <ClInclude Include="dr_wav.h" />
+    <ClInclude Include="Evaluation.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +47,17 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\hello.bmp" />
+    <Image Include="backgroundAbout.JPG" />
+    <Image Include="backgroundBoard.png" />
+    <Image Include="backgroundLoad_Set.JPG" />
+    <Image Include="backgroundMainMenu.JPG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Boheiman.ttf" />
+    <Font Include="Pixelic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpenAL32.dll" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -137,13 +154,13 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\SFML-3.0.2-windows-vc17-64-bit\SFML-3.0.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)my_library_include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenAL32.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\SFML-3.0.2-windows-vc17-64-bit\SFML-3.0.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)my_built_libraries\debug\SFML;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
