@@ -113,7 +113,7 @@ sf::VertexArray drawGrid(int w, int h, int cellSize, sf::Color color) {
 }
 
 void declare() {
-    cursor.setFillColor(sf::Color(173, 173, 173));
+    cursor.setFillColor(sf::Color::Black);
     cursor.setPosition(sf::Vector2f({ startX + 22, startY + 11 }));
 
     if (!texMain.loadFromFile("backgroundMainMenu.JPG")) std::cout << "Error at background of main menu\n";
@@ -123,6 +123,8 @@ void declare() {
 }
 
 void backGround() {
+    currentMenu = 3;
+
     const sf::Color colorGrid(128, 128, 128, 100);
     sf::Font fontTitle("Pixelic.ttf");
     sf::Text title(fontTitle, L"CARO GAME", 150);
@@ -158,6 +160,11 @@ void backGround() {
             }
             if (currentMenu == 22 && tKey == 1) handleSave(*event);
             if (currentMenu == 22) ansContinue(*event);
+            if (currentMenu == 3) {
+                if (const auto* keyPressed = event->getIf<sf::Event::KeyReleased>()) {
+                    if (keyPressed->code == sf::Keyboard::Key::L) sMM = 22;
+                }
+            }
             if (currentMenu == 3 && rKey == 1) handleRename(*event);
             if (currentMenu == 3 && dKey == 1) {
                 handleDelete();
@@ -220,6 +227,8 @@ void backGround() {
             }
 
             if (tKey == 1) {
+                std::cout << "tKey: " << drawRec << "\n";
+
                 if (drawRec == 1) window.draw(recBig);
                 window.draw(titleRecInput);
                 if (drawRec == 1) window.draw(recSmall);
@@ -246,10 +255,13 @@ void backGround() {
             titleLoad.setFillColor(sf::Color(35, 71, 139));
 
             window.draw(titleLoad);
-            if (drawRec == 1) window.draw(recBig);
-            window.draw(titleRecInput);
-            if (drawRec == 1) window.draw(recSmall);
-            window.draw(inputText);
+
+            if (rKey == 1) {                
+                if (drawRec == 1) window.draw(recBig);
+                window.draw(titleRecInput);
+                if (drawRec == 1) window.draw(recSmall);
+                window.draw(inputText);
+            }
         }
         if (currentMenu == 4) {
             showAbout();
@@ -271,227 +283,3 @@ void backGround() {
     }
 
 }
-
-//#include "giaoDien.h"
-//#include "View.h"
-//#include "controller.h"
-//#include <optional>
-//#include <algorithm>
-//#include <vector>
-//
-//int currentMenu = 0;
-//
-//const sf::Font font("coiny-regular.ttf");
-//sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "Bello");
-//sf::Color colorBackGround = sf::Color::White;
-//
-//sf::Text cursor(font, "X", 35);
-//sf::Text playerX(font, "X", 15);
-//sf::Text playerO(font, "O", 15);
-//sf::Text winText(font, "", 35);
-//sf::Text continueText(font, "", 35);
-//sf::Text saveText(font, "", 35);
-//sf::Text loadText(font, "", 35);
-//sf::Text inputText(font, "", 30);
-//sf::Text nameFile(font, "", 30);
-//
-//
-//static sf::RectangleShape grayBar;
-//static sf::RectangleShape colorBar;
-//
-//static constexpr float barWidth = 1000.f;
-//static constexpr float barHeight = 50.f;
-//static constexpr float speed = 0.25f;
-//static float currentWidthBar = 0.f;
-//
-//
-//void drawPixelSky(sf::RenderWindow& window) {
-//    sf::VertexArray sky(sf::PrimitiveType::TriangleStrip, 6);
-//    auto s = window.getSize();
-//
-//    sf::Color top(30, 120, 200);
-//    sf::Color mid(100, 180, 235);
-//    sf::Color bottom(190, 230, 255);
-//
-//    sky[0] = { {0.f, 0.f}, top };
-//    sky[1] = { {(float)s.x, 0.f}, top };
-//
-//    sky[2] = { {0.f, s.y * 0.5f}, mid };
-//    sky[3] = { {(float)s.x, s.y * 0.5f}, mid };
-//
-//    sky[4] = { {0.f, (float)s.y}, bottom };
-//    sky[5] = { {(float)s.x, (float)s.y}, bottom };
-//
-//    window.draw(sky);
-//}
-//
-//void drawPixelCloud(sf::RenderWindow& window, float x, float y, int scale, sf::Color base, sf::Color highlight) {
-//    static const int cloud[][2] = {
-//        {2,0},{3,0},{4,0},
-//        {1,1},{2,1},{3,1},{4,1},{5,1},
-//        {0,2},{1,2},{2,2},{3,2},{4,2},{5,2},{6,2},
-//        {1,3},{2,3},{3,3},{4,3},{5,3}
-//    };
-//
-//    sf::RectangleShape px({ (float)scale, (float)scale });
-//
-//    px.setFillColor(base);
-//    for (auto& p : cloud) {
-//        px.setPosition({ x + p[0] * scale, y + p[1] * scale });
-//        window.draw(px);
-//    }
-//
-//    px.setFillColor(highlight);
-//    px.setPosition({ x + 2 * scale, y });
-//    window.draw(px);
-//    px.setPosition({ x + 3 * scale, y });
-//    window.draw(px);
-//}
-//
-//void drawCloudLayers(sf::RenderWindow& window) {
-//    drawPixelCloud(window, 120, 100, 16,
-//        sf::Color(230, 245, 255),
-//        sf::Color(255, 255, 255));
-//
-//    drawPixelCloud(window, 900, 140, 14,
-//        sf::Color(230, 245, 255),
-//        sf::Color(255, 255, 255));
-//
-//    drawPixelCloud(window, 300, 220, 24,
-//        sf::Color(210, 235, 250),
-//        sf::Color(255, 255, 255));
-//
-//    drawPixelCloud(window, 800, 260, 28,
-//        sf::Color(210, 235, 250),
-//        sf::Color(255, 255, 255));
-//}
-//
-//void drawWideCloud(sf::RenderWindow& window, float x, float y, int s) {
-//    sf::RectangleShape px({ (float)s, (float)s });
-//    px.setFillColor(sf::Color(245, 250, 255));
-//
-//    int shape[][2] = {
-//        {2,0},{3,0},{4,0},{5,0},
-//        {1,1},{2,1},{3,1},{4,1},{5,1},{6,1},
-//        {0,2},{1,2},{2,2},{3,2},{4,2},{5,2},{6,2},{7,2},
-//        {1,3},{2,3},{3,3},{4,3},{5,3},{6,3}
-//    };
-//
-//    for (auto& p : shape) {
-//        px.setPosition({ x + p[0] * s, y + p[1] * s });
-//        window.draw(px);
-//    }
-//}
-//
-//static void processBar() {
-//    if (grayBar.getSize().x == 0) {
-//        grayBar.setSize({ barWidth, barHeight });
-//        grayBar.setPosition({ (WINDOW_W - barWidth) / 2.f, 700.f });
-//        grayBar.setFillColor(sf::Color(120, 120, 120));
-//
-//        colorBar.setPosition(grayBar.getPosition());
-//        colorBar.setFillColor(sf::Color::Cyan);
-//    }
-//
-//    currentWidthBar = std::min(currentWidthBar + speed, barWidth);
-//    colorBar.setSize({ currentWidthBar, barHeight });
-//}
-//
-//sf::VertexArray drawGrid(int w, int h, int cellSize, sf::Color color) {
-//    sf::VertexArray grid(sf::PrimitiveType::Lines);
-//
-//    for (int i = 0; i <= w; i += cellSize)
-//    {
-//        grid.append({ { (float)i, 0.f }, color });
-//        grid.append({ { (float)i, (float)h }, color });
-//    }
-//
-//    for (int j = 0; j <= h; j += cellSize)
-//    {
-//        grid.append({ { 0.f, (float)j }, color });
-//        grid.append({ { (float)w, (float)j }, color });
-//    }
-//
-//    return grid;
-//}
-//
-//std::vector<sf::RectangleShape> createThickGrid(int w, int h, int cellSize, sf::Color color, float thickness, float offsetX, float offsetY) {
-//    std::vector<sf::RectangleShape> lines;
-//
-//    for (int x = 0; x <= w; x += cellSize)
-//    {
-//        sf::RectangleShape line;
-//        line.setSize({ thickness, (float)h });
-//        line.setFillColor(color);
-//        line.setPosition({
-//            offsetX + x - thickness / 2.f,
-//            offsetY
-//            });
-//        lines.push_back(line);
-//    }
-//
-//    for (int y = 0; y <= h; y += cellSize)
-//    {
-//        sf::RectangleShape line;
-//        line.setSize({ (float)w, thickness });
-//        line.setFillColor(color);
-//        line.setPosition({
-//            offsetX,
-//            offsetY + y - thickness / 2.f
-//            });
-//        lines.push_back(line);
-//    }
-//
-//    return lines;
-//}
-//
-//void backGround() {
-//    sf::Text title(font, L"CARO GAME", 100);
-//    sf::Text guide(font, "Press any key to start...", 30);
-//
-//    title.setFillColor(sf::Color::Black);
-//    title.setStyle(sf::Text::Bold);
-//    title.setPosition({ WINDOW_W / 2.f - 330.f, WINDOW_H / 2.f - 150.f });
-//
-//    guide.setFillColor(sf::Color::Red);
-//    guide.setPosition({ WINDOW_W / 2.f - guide.getGlobalBounds().size.x / 2.f, 360.f });
-//
-//    while (window.isOpen()) {
-//        while (const std::optional<sf::Event> event = window.pollEvent())
-//        {
-//            if (event->is<sf::Event::Closed>())
-//                window.close();
-//
-//            run(*event);
-//        }
-//        window.clear();
-//
-//        drawPixelSky(window);
-//        drawCloudLayers(window);
-//        drawWideCloud(window, 120, 90, 18);
-//        drawWideCloud(window, 700, 130, 16);
-//        drawWideCloud(window, 300, 220, 26);
-//
-//        if (currentMenu == 0) {
-//            processBar();
-//            window.draw(title);
-//            //window.draw(guide);
-//            window.draw(grayBar);
-//            window.draw(colorBar);
-//
-//            if (currentWidthBar >= barWidth) currentMenu = 1;
-//        } else if (currentMenu == 1) {
-//            showMainMenu();
-//        } else if (currentMenu == 20) {
-//            showPlayerMenu();
-//        } else if (currentMenu == 22) {
-//            drawBoard();
-//            showPlayerInfo();
-//            window.draw(cursor);
-//            window.draw(winText);
-//        }
-//
-//        window.display();
-//    }
-//}
-
