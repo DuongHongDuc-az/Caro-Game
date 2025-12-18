@@ -23,38 +23,68 @@ static int pressT = 0;
 static bool okToCheck = 0;
 static int statusOfGame = 0;
 static std::string inputString;
-
 static void moveCursor(int direction);
 static bool processInput(const sf::Event &event, int preMenu);
 static void handleTurn();
-void handleSave(const sf::Event &event);
-void handleLoad(bool startFromMenu, const sf::Event &event);
-void handleRename(const sf::Event& event);
-void handleDelete();
 static void endGame(const sf::Event& event, int result, int player, int playWBot = 0);
 static void redrawGameScreen();
 static void runGameLoop(const sf::Event &event);
+static void updateKeyToggle();
+
+void handleSave(const sf::Event& event);
+void handleLoad(bool startFromMenu, const sf::Event& event);
+void handleRename(const sf::Event& event);
+void handleDelete();
+
+void updateKeyToggle() {
+    float leftPos = toggleTrack.getPosition().x;
+    float rightPos = toggleTrack.getPosition().x + trackW - thumbW;
+    AudioManager& audio = AudioManager::getInstance();
+
+    if (isMoving) {
+        if (isSoundOn == 1) { 
+            if (toggleThumb.getPosition().x < rightPos) {
+                toggleThumb.move(sf::Vector2f{ thumbSpeed, 0 });
+                toggleTrack.setFillColor(sf::Color(11, 218, 81));
+            }
+            else {
+                toggleThumb.setPosition(sf::Vector2f{ rightPos, toggleThumb.getPosition().y });
+                isMoving = false; 
+            }
+        }
+        else {
+            if (toggleThumb.getPosition().x > leftPos) {
+                toggleThumb.move(sf::Vector2f{ (-1) * thumbSpeed, 0 });
+                toggleTrack.setFillColor(sf::Color(128, 128, 128));
+            }
+            else {
+                toggleThumb.setPosition(sf::Vector2f{ leftPos, toggleThumb.getPosition().y });
+                isMoving = false;
+            }
+        }
+    }
+}
 
 bool isKeyDown(sf::Keyboard::Key key)
 {
     return sf::Keyboard::isKeyPressed(key);
 }
 
-static void handleSettings()
+static void handleSettings(const sf::Event& event)
 {
     bool exitSettings = false;
     AudioManager &audio = AudioManager::getInstance();
 
     // while (!exitSettings) {
     // int choice = (langChoice == 1) ? showSettingsMenu() : showMenuSettings();
-    int choice = handleVol();
-
-    //std::cout << choice << "\n";
-
+    int choice = handleVol(event);
+    
     switch (choice)
     {
     case 1:
+        //std::cout << "Bello" << "\n";
         audio.toggleMute();
+        updateKeyToggle();
         break;
     case 2:
         audio.decreaseVolume();
@@ -205,7 +235,7 @@ void run(const sf::Event &event)
     case 4:
     {
         currentMenu = 5;
-        handleSettings();
+        handleSettings(event);
         break;
     }
     case 0:
@@ -338,19 +368,16 @@ static bool processInput(const sf::Event &event, int preMenu)
         if (isKeyDown(Key::T) && lKey == 0)
             tKey = 1;
 
-        //if (isKeyDown(Key::Escape)) {
+        //if (isKeyDown(Key::Escape)) {      
             if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
-                {
-                    if (keyPressed->code == sf::Keyboard::Key::Escape) {
-                        statusOfGame = 0;
-                        currentMenu = preMenu;
-                        sMM = preMenu;
-                        return true;
-                    }
+                if (lKey != 1 && tKey != 1 && rKey != 1 && keyPressed->code == sf::Keyboard::Key::Escape) {
+                    AudioManager::getInstance().playBackgroundMusic("audio/background_music.wav");
+                    statusOfGame = 0;
+                    currentMenu = preMenu;
+                    sMM = preMenu;
+                    return true;
                 }
-                
-            }            
-            
+        }
         //}
     }
 
@@ -787,9 +814,8 @@ static inline void makeMove(int x, int y)
 
 void handleBotPlay(const sf::Event& event)
 {
-    //AudioManager::getInstance().stopBackgroundMusic();
+    AudioManager::getInstance().stopBackgroundMusic();
     bool exitRequested = false;
-    //colorBackGround = sf::Color::Green;
     //redrawGameScreen();
     //while (!exitRequested)
     //{

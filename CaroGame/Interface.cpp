@@ -2,17 +2,24 @@
 #include "View.h"
 #include "controller.h"
 
+bool isSoundOn = true;
+bool isMoving = false;
+float trackW = 80.f, trackH = 30;
+float thumbW = 30, thumbH = 30;
+float thumbSpeed = trackW - thumbW;
 int currentMenu = 0;
 const sf::Font font("Boheiman.ttf");
 const float OPAREC_W = 1200;
 const float OPAREC_H = 600;
 const float OPAREC_X = WINDOW_W / 2;
 const float OPAREC_Y = WINDOW_H - OPAREC_H - 60;
-sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "Bello");
+sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "CSLT - Group 11");
 sf::Color colorBackGround = sf::Color::Black;
 sf::Text titleRecInput(font, "", 50);
 sf::RectangleShape recBig;
 sf::RectangleShape recSmall;
+sf::RectangleShape toggleTrack;
+sf::RectangleShape toggleThumb;
 sf::Text cursor(font, "X", 35);
 sf::Text playerX(font, "X", 15);
 sf::Text playerO(font, "O", 15);
@@ -21,19 +28,63 @@ sf::Text continueText(font, "", 35);
 sf::Text saveText(font, "", 35);
 sf::Text loadText(font, "", 10);
 sf::Text inputText(font, "", 30);
-sf::Text nameFile(font, "", 30);
+sf::Text nameFile(font, "", 60);
 sf::Text titleLoad(font, "", 80);
 
 static sf::Texture texMain;
-static sf::Texture texLoadSet;
+static sf::Texture texMenu;
+static sf::Texture texLoad;
 static sf::Texture texAbout;
 static sf::Texture texBoard;
+static sf::Texture texSet;
 static sf::RectangleShape grayBar;
 static sf::RectangleShape colorBar;
 static const float BAR_WIDTH = 1000;
 static const float BAR_HEIGHT = 50;
 static const float SPEED = 0.3; 
 static float currentWidthBar = 0;
+
+void drawWinningLine(float xStart, float yStart, float xEnd, float yEnd) {
+    float dx = xEnd - xStart;
+    float dy = yEnd - yStart;
+    float length = std::sqrt(dx * dx + dy * dy);
+    float angle = std::atan2(dy, dx) * 180 / 3.14159f;
+
+    sf::RectangleShape line;
+    line.setSize(sf::Vector2f(length, 5.f)); 
+    line.setFillColor(turn == -1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
+    line.setOrigin(sf::Vector2f({ 0, 2.5f }));
+    line.setPosition(sf::Vector2f({xStart, yStart}));
+    line.setRotation(sf::degrees(angle));
+
+    //std::cout << xStart << " " << yStart << " " << xEnd << " " << yEnd << "\n";
+    window.draw(line);
+}
+
+void soundBar(int w) {
+    float barW = 800, barH = 30;
+
+    grayBar.setSize(sf::Vector2f({ barW, barH }));
+    grayBar.setPosition(sf::Vector2f({ (WINDOW_W - barW) / 2 - 100, 475 - barH }));
+    grayBar.setFillColor(sf::Color(128, 128, 128));
+
+    colorBar.setFillColor(sf::Color::Cyan);
+    colorBar.setPosition(grayBar.getPosition());
+
+    colorBar.setSize(sf::Vector2f({(float)w * 8, barH}));
+    window.draw(grayBar);
+    window.draw(colorBar);
+}
+
+void initKeyToggle(sf::Vector2f pos) {
+    toggleTrack.setSize({ trackW, trackH });
+    toggleTrack.setFillColor(sf::Color(11, 218, 81));
+    toggleTrack.setPosition(pos);
+
+    toggleThumb.setSize({ thumbW, thumbH });
+    toggleThumb.setFillColor(sf::Color::White);
+    toggleThumb.setPosition(sf::Vector2f({pos.x + trackW - thumbW, pos.y + trackH - thumbH }));
+}
 
 void drawOpaRec(float w, float h, float x, float y, sf::Color color) {
     sf::RectangleShape opaRec;
@@ -96,34 +147,22 @@ std::vector<sf::RectangleShape> createThickGrid(int w, int h, int cellSize, sf::
     return lines;
 }
 
-sf::VertexArray drawGrid(int w, int h, int cellSize, sf::Color color) {
-    const sf::Color colorGrid(color);
-    sf::VertexArray grid(sf::PrimitiveType::Lines);
-
-    for (int i = 0; i <= w; i += cellSize) {
-        grid.append(sf::Vertex{ sf::Vector2f((float)i, 0), colorGrid });
-        grid.append(sf::Vertex{ sf::Vector2f((float)i, (float)h), colorGrid });
-    }
-
-    for (int j = 0; j <= h; j += cellSize) {
-        grid.append(sf::Vertex{ sf::Vector2f(0, (float)j), colorGrid });
-        grid.append(sf::Vertex{ sf::Vector2f((float)w, (float)j), colorGrid });
-    }
-    return grid;
-}
-
 void declare() {
     cursor.setFillColor(sf::Color::Black);
     cursor.setPosition(sf::Vector2f({ startX + 22, startY + 11 }));
 
-    if (!texMain.loadFromFile("backgroundMainMenu.JPG")) std::cout << "Error at background of main menu\n";
-    if (!texLoadSet.loadFromFile("backgroundLoad_Set.JPG")) std::cout << "Error at background of load/setting\n";
-    if (!texAbout.loadFromFile("backgroundAbout.JPG")) std::cout << "Error at background of about\n";
-    if (!texBoard.loadFromFile("backgroundBoard.png")) std::cout << "Error at background of board\n";
+    if (!texMain.loadFromFile("image/background.JPG")) std::cout << "Error at background of main\n";
+    if (!texMenu.loadFromFile("image/backgroundMainMenu.png")) std::cout << "Error at background of menu\n";
+    if (!texLoad.loadFromFile("image/backgroundLoad.png")) std::cout << "Error at background of load\n";
+    if (!texAbout.loadFromFile("image/backgroundAbout.png")) std::cout << "Error at background of about\n";
+    if (!texBoard.loadFromFile("image/backgroundBoard.png")) std::cout << "Error at background of board\n";
+    if (!texSet.loadFromFile("image/backgroundSet.png")) std::cout << "Error at background of set\n";
+
+    initKeyToggle({ WINDOW_W - OPAREC_X - OPAREC_W / 2 + 350, OPAREC_Y + 85});
 }
 
 void backGround() {
-    currentMenu = 3;
+    //currentMenu = 22;
 
     const sf::Color colorGrid(128, 128, 128, 100);
     sf::Font fontTitle("Pixelic.ttf");
@@ -147,11 +186,9 @@ void backGround() {
                     lKey = 0;
                 }
             }
-            //if (event->is<sf::Event::KeyPressed>()) {
-            //}
+
             run(*event);
 
-            //if (currentMenu == 21) handleBotPlay(*event);
             if (currentMenu == 1) handleMainMenu(*event);
             if (currentMenu == 21) {
                 if (const auto* keyPressed = event->getIf<sf::Event::KeyReleased>()) {
@@ -176,13 +213,21 @@ void backGround() {
 
         sf::Sprite backgroundSprite(texMain);
         sf::Vector2u textureSize = texMain.getSize();
-        if (currentMenu == 3 || currentMenu == 5) {
-            backgroundSprite.setTexture(texLoadSet, true);
-            textureSize = texLoadSet.getSize();
+        if (currentMenu == 1 || currentMenu == 20 || currentMenu == 21) {
+            backgroundSprite.setTexture(texMenu, true);
+            textureSize = texMenu.getSize();
+        }
+        else if (currentMenu == 3) {
+            backgroundSprite.setTexture(texLoad, true);
+            textureSize = texLoad.getSize();
         }
         else if (currentMenu == 4) {
             backgroundSprite.setTexture(texAbout, true);
             textureSize = texAbout.getSize();
+        }
+        else if (currentMenu == 5) {
+            backgroundSprite.setTexture(texSet, true);
+            textureSize = texSet.getSize();
         }
         else if (currentMenu == 22) {
             backgroundSprite.setTexture(texBoard, true);
@@ -195,7 +240,6 @@ void backGround() {
         
         backgroundSprite.setScale(sf::Vector2f({ scaleX, scaleY }));
 
-        //window.draw(drawGrid(WINDOW_W, WINDOW_H, CELLSIZE, { 128, 128, 128, 100 }));
         window.draw(backgroundSprite);
 
         if (currentMenu == 1) showMainMenu();
@@ -215,20 +259,18 @@ void backGround() {
 
             window.draw(winText);
 
-            if (lKey == 1) {
-                drawOpaRec(1400, OPAREC_H, WINDOW_W / 2 - 100, WINDOW_H - OPAREC_H - 100, sf::Color::Blue);
+            if (lKey == 1 && tKey != 1) {
+                drawOpaRec(1400, OPAREC_H, WINDOW_W / 2 - 100, WINDOW_H - OPAREC_H - 100, sf::Color(34, 37, 93));
                 displayListOfFile();
-                showButtonLoad();
+                showButtonLoad(22);
 
-                if (drawRec == 1) window.draw(recBig);
+                if (drawRec == 1 && rKey == 1) window.draw(recBig);
                 window.draw(titleRecInput);
-                if (drawRec == 1) window.draw(recSmall);
+                if (drawRec == 1 && rKey == 1) window.draw(recSmall);
                 window.draw(inputText);
             }
 
-            if (tKey == 1) {
-                std::cout << "tKey: " << drawRec << "\n";
-
+            if (tKey == 1 && lKey != 1) {
                 if (drawRec == 1) window.draw(recBig);
                 window.draw(titleRecInput);
                 if (drawRec == 1) window.draw(recSmall);
@@ -239,12 +281,21 @@ void backGround() {
                 winText.setString("");
             }
 
-            if (res == 1) askContinue();
+            if (res == 1) {
+                pair<pii, pii> res = getWinLine(board);
+
+                float xStart = res.first.first;
+                float yStart = res.first.second;
+                float xEnd = res.second.first;
+                float yEnd = res.second.second;
+
+                askContinue();
+                drawWinningLine(xStart, yStart, xEnd, yEnd);
+            }
         }
         if (currentMenu == 3) {
-            drawOpaRec(1400, OPAREC_H, WINDOW_W /2 - 100, WINDOW_H - OPAREC_H - 50, sf::Color(0, 0, 0, 150));
             displayListOfFile();
-            showButtonLoad();
+            showButtonLoad(3);
 
             titleLoad.setString(langChoice == 1 ? L"LOAD GAME" : L"TẢI GAME");
             titleLoad.setCharacterSize(100);
@@ -264,12 +315,10 @@ void backGround() {
             }
         }
         if (currentMenu == 4) {
-            showAbout();
-            drawOpaRec(OPAREC_W, OPAREC_H, OPAREC_X, OPAREC_Y, sf::Color(0, 0, 0, 50));
+            showAbout();            
         }
         if (currentMenu == 5) {
             showSettingsMenu();
-            drawOpaRec(OPAREC_W, OPAREC_H, OPAREC_X, OPAREC_Y, sf::Color(0, 0, 0, 50));
         }
         if (currentMenu == 0) {
             currentMenu = processBar();

@@ -36,7 +36,7 @@ void hienMenuChinh();
 void askContinue();
 std::string getFileNameFromUser(const std::string &prompt, int x, int y);
 void showAbout();
-int handleVol();
+int handleVol(const sf::Event& event);
 void showSettingsMenu();
 int showMenuSettings();
 void showPlayerMenu();
@@ -49,7 +49,7 @@ void drawRightSideImage();
 void randomizeSideImage();
 void drawSettingsArt();
 void displayListOfFile();
-void showButtonLoad();
+void showButtonLoad(int m);
 void showInputText(int slr, const sf::Event& event);
 void handleMainMenu(const sf::Event& event);
 

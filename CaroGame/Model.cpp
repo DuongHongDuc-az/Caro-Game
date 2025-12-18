@@ -137,6 +137,9 @@ pair<pii, pii> getWinLine(BOARD& board) {
             else isContinue2 = 0;
         }
     }
+
+    //cout << res.first.first << " " << res.first.second << " " << res.second.first << " " << res.second.second << "\n";
+
     return res;
 }
 
@@ -164,36 +167,29 @@ int getGameState(BOARD& board, _POINT lastMove) {
     return 2;
 }
 
-static void saveTimeOfFile(std::string fileName) {
-    
+static void saveTimeOfFile(std::string s) {
     std::time_t timeNum = std::time(nullptr);
     std::tm timeReal{};
 
     localtime_s(&timeReal, &timeNum);
 
     char dateShow[100], timeShow[100];
-    //wchar_t dateShow[100], timeShow[100];
+
     std::strftime(dateShow, sizeof(dateShow), "%d/%m/%Y", &timeReal);
     std::strftime(timeShow, sizeof(timeShow), " %H:%M:%S", &timeReal);
-    //std::wcsftime(dateShow, sizeof(dateShow), L"%d/%m/%Y", &timeReal);
-    //std::wcsftime(timeShow, sizeof(timeShow), L"%H:%M:%S", &timeReal);
     
     std::ofstream f("timeFile.txt");
 
     for (int i = 0; i < timeFl.size(); ++i) {
-        if (timeFl[i].first == fileName) {
+        if (timeFl[i].first == s) {
             timeFl.erase(timeFl.begin() + i);
             break;
         }
     }
-    timeFl.push_back({ fileName, {dateShow, timeShow } });
+    timeFl.push_back({ s, {dateShow, timeShow } });
 
     f << timeFl.size() << "\n";
     for (size_t i = 0; i < timeFl.size(); ++i) {
-        //std::wostringstream woss;
-        //woss << timeFl[i].first;
-
-        //f << woss.str() << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
         f << timeFl[i].first << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
     }
 
@@ -204,7 +200,19 @@ bool saveGame(const std::string& filename) {
     std::ofstream nOF(L"name_of_file.txt");
     if (!nOF.is_open()) return false;
 
+    int tmp = nameOfFile.size();
+
+    for (int i = 0; i < tmp; ++i) {
+        if (nameOfFile[i] == filename) {
+            nameOfFile.erase(nameOfFile.begin() + i);
+            timeFl.erase(timeFl.begin() + i);
+
+            break;
+        }
+    }
+
     nameOfFile.push_back(filename);
+
     nOF << nameOfFile.size() << "\n";
     for (int i = 0; i < nameOfFile.size(); ++i) {
         nOF << i << " " << nameOfFile[i] << "\n";
@@ -214,7 +222,6 @@ bool saveGame(const std::string& filename) {
 
     char c = (int)(nameOfFile.size() - 1) + '0';
     std::string fileName{ c };
-    //std::cout << "File name: " << fileName << "\n";
     std::ofstream f(fileName);
     if (!f.is_open()) return false;
 
@@ -227,8 +234,7 @@ bool saveGame(const std::string& filename) {
         }
         f << "\n";
     }
-    //f << "Player X" << "\n" << player1.moves << "\n" << player1.wins << "\n";
-    //f << "Player O" << "\n" << player2.moves << "\n" << player2.wins << "\n";
+
     f << player1.moves << "\n" << player1.wins << "\n";
     f << player2.moves << "\n" << player2.wins << "\n";
     f.close();

@@ -19,17 +19,27 @@ const int CELLSIZE = 75;
 const int WINDOW_W = 1500;
 const int WINDOW_H = 800;
 
+extern bool isSoundOn;
+extern bool isMoving;
+extern float thumbSpeed;
+extern float trackW;
+extern float trackH;
+extern float thumbW; 
+extern float thumbH;
 extern int currentMenu;
-extern const sf::Font font;
+
 extern const float OPAREC_W;
 extern const float OPAREC_H;
 extern const float OPAREC_X;
 extern const float OPAREC_Y;
+extern const sf::Font font;
 extern sf::RenderWindow window;
-extern sf::Text titleRecInput;
+extern sf::Color colorBackGround;
 extern sf::RectangleShape recBig;
 extern sf::RectangleShape recSmall;
-extern sf::Color colorBackGround;
+extern sf::RectangleShape toggleTrack;
+extern sf::RectangleShape toggleThumb;
+extern sf::Text titleRecInput;
 extern sf::Text cursor;
 extern sf::Text playerX;
 extern sf::Text playerO;
@@ -46,10 +56,12 @@ struct Star {
     float brightness;
 };
 
+void soundBar(int w);
+void initKeyToggle(sf::Vector2f pos);
 void drawOpaRec(float w, float h, float x, float y, sf::Color color);
 void declare();
 void backGround();
-sf::VertexArray drawGrid(int w, int h, int cellSize, sf::Color color);
+void drawWinningLine(float xStart, float yStart, float xEnd, float yEnd);
 std::vector<sf::RectangleShape> createThickGrid(int w, int h, int cellSize, sf::Color color, float thickness, float offsetX, float offsetY);
 
 

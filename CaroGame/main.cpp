@@ -9,17 +9,16 @@ int main() {
     //system("pause");
     //setConsoleFont();
     //SetConsoleOutputCP(65001);
-    //AudioManager::getInstance().init();
+    AudioManager::getInstance().init();
     //setColor(240);
     //showSplashScreen();
-    //AudioManager::getInstance().playBackgroundMusic("audio/background_music.wav");
+    AudioManager::getInstance().playBackgroundMusic("audio/background_music.wav");
     //SetConsoleCP(65001);
     //system("color F0");
     //system("cls");
     //run();
-    //AudioManager::getInstance().cleanup();
-    
     backGround();
-
+    AudioManager::getInstance().cleanup();  
+    
     return 0;
 }
