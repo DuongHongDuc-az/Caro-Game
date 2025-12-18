@@ -103,6 +103,35 @@ bool takeTurn(int pX, int pY) {
     return true;
 }
 
+static pii winPosition, winDirection;
+
+pair<pii, pii> getWinLine(BOARD &board) {
+    auto add = [](pii &a, pii &b) {
+        a.ff += b.ff;
+        a.ss += b.ss;
+    }
+    pair<pii,pii> res;
+    bool isContinue1 = 1, isContinue2 = 1;
+    pii pos1 = mp(winPosition.ff+winDirection.ff, winPosition.ss+winDirection.ss), pos2 = mp(winPosition.ff-winDirection.ff,winPosition.ss-winDirection.ss);
+    while(isContinue1 || isContinue2) {
+        if (isContinue1) {
+            if (Evaluation::isValidCell(pos1.ff, pos1.ss) && board[pos1.ff][pos1.ss].c == board[winPosition.ff][winPosition.ss]) {
+                res.ff = pos1;
+                add(pos1, mp(winDirection.ff, winDirection.ss));
+            }
+            else isContinue1 = 0;
+        }
+        if (isContinue2) {
+            if (Evaluation::isValidCell(pos2.ff, pos2.ss) && board[pos2.ff][pos2.ss].c == board[winPosition.ff][winPosition.ss]) {
+                res.ss = pos2;
+                add(pos2, mp(-winDirection.ff, -winDirection.ss));
+            }
+            else isContinue2 = 0;
+        }
+    }
+    return res;
+}
+
 int getGameState(BOARD& board, _POINT lastMove) {
     //Return values: 0 - draw, 1 - Win, 2 - ongoing
     function<int(_POINT&, int, int)> countConsecutive = [&](_POINT& move, int dX, int dY) {
@@ -118,8 +147,11 @@ int getGameState(BOARD& board, _POINT lastMove) {
     if (remains == 0) return 0;
     for (auto dir : Evaluation::direct) {
         int res = countConsecutive(lastMove, dir.ff, dir.ss) + countConsecutive(lastMove, -dir.ff, -dir.ss) + 1;
-        if (res >= 5)
+        if (res >= 5) {
+            winPosition = mp(lastMove.x, lastMove.y);
+            winDirection = dir;
             return 1;
+        }
     }
     return 2;
 }

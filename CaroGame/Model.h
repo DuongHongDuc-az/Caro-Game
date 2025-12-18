@@ -65,6 +65,7 @@ extern std::vector<std::string> nameOfFile;
 
 void resetData();
 bool takeTurn(int pX, int pY);
+pair<pii,pii> getWinLine(BOARD &board);
 int getGameState(BOARD &board, _POINT lastMove);
 bool saveGame(const std::string &filename);
 bool loadGame(const std::string &filename);
