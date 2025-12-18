@@ -105,24 +105,24 @@ bool takeTurn(int pX, int pY) {
 
 static pii winPosition, winDirection;
 
-pair<pii, pii> getWinLine(BOARD &board) {
-    auto add = [](pii &a, pii &b) {
+pair<pii, pii> getWinLine(BOARD& board) {
+    function<void(pii&, pii)> add = [&](pii& a, pii b) {
         a.ff += b.ff;
         a.ss += b.ss;
-    }
-    pair<pii,pii> res;
+        };
+    pair<pii, pii> res;
     bool isContinue1 = 1, isContinue2 = 1;
-    pii pos1 = mp(winPosition.ff+winDirection.ff, winPosition.ss+winDirection.ss), pos2 = mp(winPosition.ff-winDirection.ff,winPosition.ss-winDirection.ss);
-    while(isContinue1 || isContinue2) {
+    pii pos1 = mp(winPosition.ff + winDirection.ff, winPosition.ss + winDirection.ss), pos2 = mp(winPosition.ff - winDirection.ff, winPosition.ss - winDirection.ss);
+    while (isContinue1 || isContinue2) {
         if (isContinue1) {
-            if (Evaluation::isValidCell(pos1.ff, pos1.ss) && board[pos1.ff][pos1.ss].c == board[winPosition.ff][winPosition.ss]) {
+            if (Evaluation::isValidCell(pos1.ff, pos1.ss) && board[pos1.ff][pos1.ss].c == board[winPosition.ff][winPosition.ss].c) {
                 res.ff = pos1;
                 add(pos1, mp(winDirection.ff, winDirection.ss));
             }
             else isContinue1 = 0;
         }
         if (isContinue2) {
-            if (Evaluation::isValidCell(pos2.ff, pos2.ss) && board[pos2.ff][pos2.ss].c == board[winPosition.ff][winPosition.ss]) {
+            if (Evaluation::isValidCell(pos2.ff, pos2.ss) && board[pos2.ff][pos2.ss].c == board[winPosition.ff][winPosition.ss].c) {
                 res.ss = pos2;
                 add(pos2, mp(-winDirection.ff, -winDirection.ss));
             }

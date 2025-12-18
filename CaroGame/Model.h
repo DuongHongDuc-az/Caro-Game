@@ -21,6 +21,7 @@ using std::vector;
 #define fto(i, j, k) for (int i = j; i <= k; ++i)
 
 typedef vector<vector<int>> MATRIX;
+typedef pair<int, int> pii;
 
 struct _POINT
 {
