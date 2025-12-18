@@ -9,6 +9,8 @@ extern int rKey;
 extern int lKey;
 extern int tKey;
 extern int diffChoice;
+extern int cursorCol;
+extern int cursorRow;
 
 void run(const sf::Event &event);
 void handleBotPlay(const sf::Event& event);

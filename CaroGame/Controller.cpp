@@ -14,12 +14,12 @@ int rKey = 0;
 int lKey = 0;
 int tKey = 0;
 int diffChoice = 0;
+int cursorCol = 0;
+int cursorRow = 0;
 
 static int bot = -1;
 static int pressL = 0;
 static int pressT = 0;
-static int cursorCol = 0;
-static int cursorRow = 0;
 static bool okToCheck = 0;
 static int statusOfGame = 0;
 static std::string inputString;
@@ -331,10 +331,10 @@ static bool processInput(const sf::Event &event, int preMenu)
         if (isKeyDown(Key::Enter) && lKey == 0 && tKey == 0)
             handleTurn();
 
-        //if (isKeyDown(Key::L) && tKey == 0)
-            if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
-                if (lKey == 0 && keyPressed->code == sf::Keyboard::Key::L) lKey = 1;
-            }
+        if (isKeyDown(Key::L) && tKey == 0) lKey = 1;
+            //if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+            //    if (lKey == 0 && keyPressed->code == sf::Keyboard::Key::L) lKey = 1;
+            //}
         if (isKeyDown(Key::T) && lKey == 0)
             tKey = 1;
 
@@ -342,6 +342,7 @@ static bool processInput(const sf::Event &event, int preMenu)
             if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
                 {
                     if (keyPressed->code == sf::Keyboard::Key::Escape) {
+                        statusOfGame = 0;
                         currentMenu = preMenu;
                         sMM = preMenu;
                         return true;
@@ -377,7 +378,7 @@ static void moveCursor(int direction)
     // std::cout << "Con tro: " << screenX << " " << screenY << "\n";
 
     cursor.setString(turn == 1 ? "X" : "O");
-    cursor.setFillColor(sf::Color(173, 173, 173));
+    cursor.setFillColor(sf::Color::Black);
     cursor.setPosition(sf::Vector2f({(float)screenX, (float)screenY}));
 }
 

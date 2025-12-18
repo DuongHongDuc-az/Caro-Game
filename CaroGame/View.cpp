@@ -24,6 +24,9 @@ int askCon = 0;
 float startX = (1500 - cs) / 2.0f;
 float startY = (800 - cs) / 2.0f;
 
+static int numFileShow = 5;
+static int startShowFile = 0;
+static int endShowFile = startShowFile + numFileShow;;
 static int pressR = 0;
 static int selectedItem = 0;
 static int selectedFile = 0;
@@ -264,22 +267,25 @@ void updateCellAtScreen(int screenX, int screenY, int player, int b)
                 posY = startY + (r + 1) * 11 + 59 * (r);
 
                 currentPiece.setCharacterSize(35);
+                currentPiece.setFillColor(piece == 1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
             }
             else {
                 //int posX = 
                 posX = WINDOW_W / 2 + 100 + (c + 1) * 17 + 38 * (c);
-                posY = WINDOW_H / 2 - 225 + (r + 1) * 7 + 49 * (r);
+                
+                if (currentMenu == 3) posY = WINDOW_H / 2 - 225 + (r + 1) * 7 + 49 * (r);
+                else posY = WINDOW_H / 2 - 275 + (r + 1) * 7 + 49 * (r);
                 //posY = WINDOW_H / 2 - 225;
 
                 currentPiece.setCharacterSize(27.5);
+                currentPiece.setFillColor(piece == 1 ? sf::Color::Red : sf::Color::Green);
             }            
 
             if (piece != 0)
             {
                 currentPiece.setString(piece == 1 ? "X" : "O");
                 currentPiece.setPosition(sf::Vector2f({(float)posX, (float)posY}));
-                currentPiece.setFillColor(piece == 1 ? sf::Color::Red : sf::Color::Green);
-
+                
                 window.draw(currentPiece);
             }
         }
@@ -377,17 +383,27 @@ void displayListOfFile() {
     handleShowListOfFile();
 
     sf::Text fileText(font, "", 30);
-    
-    for (int i = 0; i < timeFl.size(); ++i) {
-        sf::String text = nameOfFile[i];
-        text += " " + timeFl[i].second.first + " " + timeFl[i].second.second;
+    float col1_X = WINDOW_W - OPAREC_X - OPAREC_W / 2 - 75;
+    float col2_X = col1_X + 300;
+    float col3_X = col2_X + 200;
 
-        fileText.setString(text);
-        fileText.setPosition(sf::Vector2f({ WINDOW_W - OPAREC_X - OPAREC_W / 2 - 75, currentMenu == 3 ? OPAREC_Y - 50 + 45 * (float)(i + 2) : OPAREC_Y - 100 + 45 * (float)(i + 2) }));
+    if (endShowFile > timeFl.size()) endShowFile = timeFl.size();
 
-        if (selectedFile == (int)i) {
-            fileText.setFillColor(sf::Color::Yellow);
+    for (int i = startShowFile; i < endShowFile; ++i) {
+        float posY;
 
+        if (endShowFile <= numFileShow) {
+            if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(i + 2);
+            else posY = OPAREC_Y - 100 + 65 * (float)(i + 2);
+        }
+        else {
+            float tmp = i - ((endShowFile - 1) - (numFileShow - 1));
+            if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(tmp + 2);
+            else posY = OPAREC_Y - 100 + 65 * (float)(tmp + 2);
+        }
+
+        //if (selectedFile == (int)i) {
+        if (selectedFile == i) {
             if (handleLoadMiniBoard(i)) {
                 updateCellAtScreen(1, 1, 1, 0);
             }
@@ -403,21 +419,23 @@ void displayListOfFile() {
             fileText.setFillColor(sf::Color::White);
         }
 
+        //window.draw(fileText);
+
+        sf::Color textColor = (selectedFile == (int)i) ? sf::Color::Yellow : sf::Color::White;
+        fileText.setFillColor(textColor);
+
+        fileText.setString(nameOfFile[i]);
+        fileText.setPosition({ col1_X, posY });
+        window.draw(fileText);
+
+        fileText.setString(timeFl[i].second.first);
+        fileText.setPosition({ col2_X, posY });
+        window.draw(fileText);
+
+        fileText.setString(timeFl[i].second.second);
+        fileText.setPosition({ col3_X, posY });
         window.draw(fileText);
     }
-
-        // int itemY = menuY + 2 + i * 2;
-        // int textX = menuX + (boxWidth - (int)menuItems[i].length()) / 2;
-
-            // string label = " >> " + menuItems[i] + " << ";
-            // int labelX = menuX + (boxWidth - (int)label.length()) / 2;
-
-            // GotoXY(labelX, itemY);
-            // setColor(240 + 12);
-            // cout << label;
-            // GotoXY(textX, itemY);
-            // setColor(240);
-            // cout << menuItems[i];
 
     int itemChanged = 0;
 
@@ -437,7 +455,7 @@ void displayListOfFile() {
 
     if (currentMenu == 3) {
         if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::L)) {
-            sMM = 22;
+            //sMM = 22;
             loadFromMenu = 1;
             loadGame(nameOfFile[selectedFile]);
         }
@@ -458,7 +476,7 @@ void displayListOfFile() {
 
     if (currentMenu == 22) {
         
-        if (dKey != 1 && rKey != 1 && lKey == 1 && isKeyDown(Key::L)) {
+        if (dKey != 1 && rKey != 1 && lKey == 1 && isKeyDown(Key::Space)) {
             loadGame(nameOfFile[selectedFile]);
             lKey = -1;
         }
@@ -484,6 +502,15 @@ void displayListOfFile() {
         selectedFile = timeFl.size() - 1;
     if (selectedFile >= timeFl.size())
         selectedFile = 0;
+    
+    if (selectedFile >= endShowFile) {
+        ++startShowFile;
+        ++endShowFile;
+    }
+    if (selectedFile < startShowFile) {
+        --startShowFile;
+        --endShowFile;
+    }
 
     std::vector<sf::RectangleShape> drawBoard = createThickGrid(550, 550, 55, sf::Color::White, 2, WINDOW_W / 2 + 100, currentMenu == 3 ? WINDOW_H / 2 - 225 : WINDOW_H / 2 - 275);
 
@@ -1669,13 +1696,20 @@ void showInputText(int slr, const sf::Event& event) {
     }
 
     if (res == 1) {
-        inputText.setString("");
-        titleRecInput.setString("");
-        inputString = "";
-        rKey = 0;
-        tKey = 0;
-        pressR = 0;
-        oldFile = -1;
-        drawRec = 0;
+        if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+            {
+                if (keyPressed->code == sf::Keyboard::Key::R || keyPressed->code == sf::Keyboard::Key::T) {
+                    inputText.setString("");
+                    titleRecInput.setString("");
+                    inputString = "";
+                    rKey = 0;
+                    tKey = 0;
+                    pressR = 0;
+                    oldFile = -1;
+                    drawRec = 0;
+                }
+            }
+
+        }
     }
 }

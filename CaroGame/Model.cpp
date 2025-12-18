@@ -2,6 +2,7 @@
 #include "AI.h"
 #include "Evaluation.h"
 #include "Interface.h"
+#include "Controller.h"
 #include <fstream>
 #include <cstring>
 #include <ctime>
@@ -32,6 +33,8 @@ static float startY = (800 - cs) / 2.0f;
 
 void resetData() {
     turn = 1;
+    cursorCol = 0;
+    cursorRow = 0;
     _POINT rtlB(11,11), rbrB(0,0);
     swap(rtlB, tlB);
     swap(rbrB, brB);
@@ -56,12 +59,14 @@ void resetData() {
     int sizeNameOfFile = 0;
 
     nOF >> sizeNameOfFile;
+    nameOfFile.resize(sizeNameOfFile);
+
     for (int i = 0; i < sizeNameOfFile; ++i) {
         std::string ws;
         int m = -1;
 
         nOF >> m >> ws;
-        nameOfFile.push_back(ws);
+        nameOfFile[i] = ws;
     }
 
     nOF.close();
@@ -71,12 +76,15 @@ void resetData() {
     int sizeTimeFile = 0;
 
     f >> sizeTimeFile;
+
+    timeFl.resize(sizeTimeFile);
+
     for (size_t i = 0; i < sizeTimeFile; ++i) {
         std::string num, d, t;
         int m = -1;
 
         f >> num >> d >> t;
-        timeFl.push_back({num, {d, t}});
+        timeFl[i] = { num, {d, t} };
     }
 
     f.close();
