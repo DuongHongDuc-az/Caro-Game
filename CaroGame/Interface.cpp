@@ -243,7 +243,10 @@ void backGround() {
         window.draw(backgroundSprite);
 
         if (currentMenu == 1) showMainMenu();
-        if (currentMenu == 20) showPlayerMenu();
+        if (currentMenu == 20) {
+            showPlayerMenu();
+            //sMM = 20;
+        }
         if (currentMenu == 21) showModeMenu(1);
         if (currentMenu == 22) {
             drawBoard();

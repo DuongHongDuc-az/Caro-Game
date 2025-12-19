@@ -110,6 +110,7 @@ void run(const sf::Event &event)
 
     int choice = sMM;
     // while (true) {
+
     switch (choice) {
     case 1: {
         if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
@@ -157,10 +158,17 @@ void run(const sf::Event &event)
     case 21:
     {
         if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
+            if (currentMenu == 21 && keyPressed->code == sf::Keyboard::Key::Space) {
+                currentMenu = 22;
+                sMM = 211;
+            }
+
             if (currentMenu == 20 && keyPressed->code == sf::Keyboard::Key::Space) {
                 currentMenu = 21;
                 //sMM = 211;
             }
+
+            
         }
 
         //int diffChoice = 0;
@@ -168,12 +176,6 @@ void run(const sf::Event &event)
         if (0 < diffChoice && diffChoice < 4) DIFF = diffChoice;
         else break;
         //        randomizeSideImage();
-        if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
-            if (currentMenu == 21 && keyPressed->code == sf::Keyboard::Key::Space) {
-                currentMenu = 22;
-                sMM = 211;
-            }
-        }
         //resetData();
         //handleBotPlay(event);
 
@@ -194,6 +196,7 @@ void run(const sf::Event &event)
         else
             statusOfGame = 2;
         handleBotPlay(event); 
+        AudioManager::getInstance().stopBackgroundMusic();
 
         break;
     }
@@ -218,6 +221,7 @@ void run(const sf::Event &event)
             statusOfGame = 2;
 
         runGameLoop(event);
+        AudioManager::getInstance().stopBackgroundMusic();
         break;
     }
     case 3:
@@ -260,7 +264,6 @@ void run(const sf::Event &event)
 
 static void runGameLoop(const sf::Event &event)
 {
-    AudioManager::getInstance().stopBackgroundMusic();
     bool exitRequested = false;
     redrawGameScreen();
 
@@ -373,8 +376,10 @@ static bool processInput(const sf::Event &event, int preMenu)
                 if (lKey != 1 && tKey != 1 && rKey != 1 && keyPressed->code == sf::Keyboard::Key::Escape) {
                     AudioManager::getInstance().playBackgroundMusic("audio/background_music.wav");
                     statusOfGame = 0;
-                    currentMenu = preMenu;
-                    sMM = preMenu;
+                    //currentMenu = preMenu;
+                    //sMM = preMenu;
+                    currentMenu = 20;
+                    sMM = 20;
                     return true;
                 }
         }
@@ -814,7 +819,6 @@ static inline void makeMove(int x, int y)
 
 void handleBotPlay(const sf::Event& event)
 {
-    AudioManager::getInstance().stopBackgroundMusic();
     bool exitRequested = false;
     //redrawGameScreen();
     //while (!exitRequested)

@@ -19,10 +19,10 @@ int oldFile = -1;
 int loadFromMenu = 0;
 int langChoice = 1;
 int sMM = 100;
-int cs = (BOARD_SIZE) * 70;
+int cs = (BOARD_SIZE) * 70; //60
 int askCon = 0;
-float startX = (1500 - cs) / 2.0f;
-float startY = (800 - cs) / 2.0f;
+float startX = (WINDOW_W - cs) / 2.0f;
+float startY = (WINDOW_H - cs) / 2.0f;
 
 static int numFileShow = 5;
 static int startShowFile = 0;
@@ -339,7 +339,7 @@ void drawBoard()
     // }
     //}
 
-    std::vector<sf::RectangleShape> drawBoard = createThickGrid(cs, cs, 70, sf::Color(35, 71, 139), 5, startX, startY);
+    std::vector<sf::RectangleShape> drawBoard = createThickGrid(cs, cs, cs / BOARD_SIZE, sf::Color(35, 71, 139), 5, startX, startY);
 
     for (const auto &line : drawBoard)
     {
@@ -524,7 +524,7 @@ void displayListOfFile() {
             --endShowFile;
         }
 
-        std::vector<sf::RectangleShape> drawBoard = createThickGrid(550, 550, 55, sf::Color::White, 2, WINDOW_W / 2 + 100, currentMenu == 3 ? WINDOW_H / 2 - 225 : WINDOW_H / 2 - 275);
+        std::vector<sf::RectangleShape> drawBoard = createThickGrid(450, 450, 45, sf::Color::White, 2, WINDOW_W / 2 + 100, currentMenu == 3 ? WINDOW_H / 2 - 225 : WINDOW_H / 2 - 275);
 
         for (const auto& line : drawBoard) window.draw(line);
     }
