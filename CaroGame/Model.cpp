@@ -24,7 +24,7 @@ Player player2;
 std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
 
 std::vector<std::string> nameOfFile;
-_POINT tlB(11,11), brB(0,0);
+_POINT tlB(9,9), brB(0,0);
 
 static void saveTimeOfFile(std::string fileName);
 static int cs = (BOARD_SIZE) * 70;
@@ -35,7 +35,7 @@ void resetData() {
     turn = 1;
     cursorCol = 0;
     cursorRow = 0;
-    _POINT rtlB(11,11), rbrB(0,0);
+    _POINT rtlB(9,9), rbrB(0,0);
     swap(rtlB, tlB);
     swap(rbrB, brB);
     remains = BOARD_SIZE * BOARD_SIZE;
@@ -118,7 +118,7 @@ pair<pii, pii> getWinLine(BOARD& board) {
         a.ff += b.ff;
         a.ss += b.ss;
         };
-    pair<pii, pii> res;
+    pair<pii, pii> res = mp(mp(winPosition.ff, winPosition.ss), mp(winPosition.ff, winPosition.ss));
     bool isContinue1 = 1, isContinue2 = 1;
     pii pos1 = mp(winPosition.ff + winDirection.ff, winPosition.ss + winDirection.ss), pos2 = mp(winPosition.ff - winDirection.ff, winPosition.ss - winDirection.ss);
     while (isContinue1 || isContinue2) {
