@@ -161,7 +161,7 @@ void declare() {
     initKeyToggle({ WINDOW_W - OPAREC_X - OPAREC_W / 2 + 350, OPAREC_Y + 85});
 }
 
-void backGround() {
+void startGame() {
     //currentMenu = 22;
 
     const sf::Color colorGrid(128, 128, 128, 100);

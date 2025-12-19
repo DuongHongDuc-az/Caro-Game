@@ -60,7 +60,7 @@ void soundBar(int w);
 void initKeyToggle(sf::Vector2f pos);
 void drawOpaRec(float w, float h, float x, float y, sf::Color color);
 void declare();
-void backGround();
+void startGame();
 void drawWinningLine(float xStart, float yStart, float xEnd, float yEnd);
 std::vector<sf::RectangleShape> createThickGrid(int w, int h, int cellSize, sf::Color color, float thickness, float offsetX, float offsetY);
 

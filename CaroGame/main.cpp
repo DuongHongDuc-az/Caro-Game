@@ -17,7 +17,7 @@ int main() {
     //system("color F0");
     //system("cls");
     //run();
-    backGround();
+    startGame();
     AudioManager::getInstance().cleanup();  
     
     return 0;
