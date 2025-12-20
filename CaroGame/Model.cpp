@@ -169,7 +169,6 @@ int getGameState(BOARD& board, _POINT lastMove) {
 }
 
 void saveTimeOfFile(std::string fileName) {
-
     std::time_t timeNum = std::time(nullptr);
     std::tm timeReal{};
 
@@ -178,7 +177,6 @@ void saveTimeOfFile(std::string fileName) {
     char dateShow[100], timeShow[100];
     std::strftime(dateShow, sizeof(dateShow), "%d/%m/%Y", &timeReal);
     std::strftime(timeShow, sizeof(timeShow), " %H:%M:%S", &timeReal);
-
 
     std::ofstream f("timeFile.txt");
 

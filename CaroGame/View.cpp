@@ -1643,7 +1643,7 @@ void showInputText(int slr, const sf::Event& event) {
         else if (unicode == 13)
         {
             if (slr == 3) {
-                res = renameGame(nameOfFile[oldFile], inputString);
+                res = renameGame(timeFl[oldFile].ff, inputString);
 
                 inputText.setString("");
                 titleRecInput.setString("");
