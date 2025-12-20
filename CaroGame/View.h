@@ -18,6 +18,7 @@ extern int drawRec;
 extern int delFile;
 extern int res;
 extern int askCon;
+extern int selectedFile;
 
 void fixConsoleWindow();
 void GotoXY(int x, int y);

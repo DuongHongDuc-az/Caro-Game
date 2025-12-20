@@ -19,8 +19,9 @@ int oldFile = -1;
 int loadFromMenu = 0;
 int langChoice = 1;
 int sMM = 100;
-int cs = (BOARD_SIZE) * 70; //60
+int cs = (BOARD_SIZE) * 60;
 int askCon = 0;
+int selectedFile = 0;
 float startX = (WINDOW_W - cs) / 2.0f;
 float startY = (WINDOW_H - cs) / 2.0f;
 
@@ -29,7 +30,6 @@ static int startShowFile = 0;
 static int endShowFile = startShowFile + numFileShow;;
 static int pressR = 0;
 static int selectedItem = 0;
-static int selectedFile = 0;
 static int selectedDiff = 0;
 static int selectedMode = 0;
 static int selectedButton = -1;
@@ -59,7 +59,7 @@ void showSettingsMenu()
     // system("cls");
     // setColor(240);
     // drawSettingsArt();
-    AudioManager &audio = AudioManager::getInstance();
+    AudioManager& audio = AudioManager::getInstance();
     // int leftX = 18;
     // int topY = 12;
     // GotoXY(leftX, topY);
@@ -85,13 +85,13 @@ void showSettingsMenu()
 
     vector<wstring> outSettingsMenu;
     wstring outSettingsMenuTitle = (langChoice == 1 ? L"SETTINGS" : L"CÀI ĐẶT");
-    std::wostringstream woss;
+    std::stringstream woss;
 
     int soundLevel = (int)audio.getVolumeLevel();
     isSoundOn = audio.isMuted();
     isMoving = true;
 
-    woss << soundLevel << L"%";
+    woss << soundLevel << "%";
 
     if (langChoice == 1)
     {
@@ -102,7 +102,7 @@ void showSettingsMenu()
             L"2. Decrease Volume",
             L"3. Increase Volume",
             L" ",
-            L"ESC. Back to Main Menu"};
+            L"ESC. Back to Main Menu" };
     }
     else
     {
@@ -111,18 +111,18 @@ void showSettingsMenu()
             L"2. Giảm âm lượng",
             L"3. Tăng âm lượng",
             L" ",
-            L"ESC: Quay lại Menu Chính"};
+            L"ESC: Quay lại Menu Chính" };
     }
 
     sf::Text title(font, outSettingsMenuTitle, 80);
-    sf::Text textSound(font, woss.str(), 80);
+    sf::Text textSound(font, woss.str(), 50);
     sf::FloatRect bounds = title.getLocalBounds();
 
     title.setOrigin(bounds.getCenter());
-    title.setPosition(sf::Vector2f({WINDOW_W / 2, OPAREC_Y - title.getCharacterSize() / 2}));
+    title.setPosition(sf::Vector2f({ WINDOW_W / 2, OPAREC_Y - title.getCharacterSize() / 2 }));
     title.setFillColor(sf::Color(35, 71, 139));
     textSound.setOrigin(bounds.getCenter());
-    textSound.setPosition(sf::Vector2f({ (WINDOW_W - 800) / 2 + 950, OPAREC_Y - 60 + 75 * (float)(3 + 2) }));
+    textSound.setPosition(sf::Vector2f({ (WINDOW_W - 800) / 2 + 900, OPAREC_Y - 30 + 75 * (float)(3 + 2) }));
     textSound.setFillColor(sf::Color::White);
 
     window.draw(textSound);
@@ -132,7 +132,7 @@ void showSettingsMenu()
     {
         sf::Text text(font, outSettingsMenu[i], 35);
         text.setFillColor(sf::Color::White);
-        text.setPosition(sf::Vector2f({WINDOW_W - OPAREC_X - OPAREC_W / 2 + 50, OPAREC_Y - 75 + 75 * (float)(i + 2)}));
+        text.setPosition(sf::Vector2f({ WINDOW_W - OPAREC_X - OPAREC_W / 2 + 125, OPAREC_Y - 75 + 75 * (float)(i + 2) }));
 
         window.draw(text);
     }
@@ -192,9 +192,9 @@ void fixConsoleWindow()
     fontInfo.dwFontSize.X = 0;
     fontInfo.dwFontSize.Y = 16;
     SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
-    COORD bufferSize = {120, 65};
+    COORD bufferSize = { 120, 65 };
     SetConsoleScreenBufferSize(hConsole, bufferSize);
-    SMALL_RECT windowSize = {0, 0, 119, 60};
+    SMALL_RECT windowSize = { 0, 0, 119, 60 };
     SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
     LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
     style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
@@ -273,29 +273,33 @@ void updateCellAtScreen(int screenX, int screenY, int player, int b)
             sf::Text currentPiece(font, "", 35);
 
             if (b == 1) {
-                posX = startX + (c + 1) * 22 + 48 * (c);
-                posY = startY + (r + 1) * 11 + 59 * (r);
+                posX = startX + (c + 1) * 18 + 42 * (c);
+                posY = startY + (r + 1) * 6 + 54 * (r);
 
                 currentPiece.setCharacterSize(35);
                 currentPiece.setFillColor(piece == 1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
             }
             else {
                 //int posX = 
-                posX = WINDOW_W / 2 + 100 + (c + 1) * 17 + 38 * (c);
-                
-                if (currentMenu == 3) posY = WINDOW_H / 2 - 225 + (r + 1) * 7 + 49 * (r);
-                else posY = WINDOW_H / 2 - 275 + (r + 1) * 7 + 49 * (r);
-                //posY = WINDOW_H / 2 - 225;
+                posX = WINDOW_W / 2 + 100 + (c + 1) * 15 + 35 * (c);
+               
+                if (currentMenu == 3) posY = WINDOW_H / 2 - 208 + (r + 1) * 5 + 45 * (r);
+                else posY = WINDOW_H / 2 - 250 + (r + 1) * 5 + 45 * (r);
 
                 currentPiece.setCharacterSize(27.5);
-                currentPiece.setFillColor(piece == 1 ? sf::Color::Red : sf::Color::Green);
-            }            
+                if (currentMenu == 3) {
+                    currentPiece.setFillColor(piece == 1 ? sf::Color(255, 48, 48) : sf::Color::Green);
+                }
+                else {
+                    currentPiece.setFillColor(piece == 1 ? sf::Color::Red : sf::Color::Green);
+                }
+            }
 
             if (piece != 0)
             {
                 currentPiece.setString(piece == 1 ? "X" : "O");
-                currentPiece.setPosition(sf::Vector2f({(float)posX, (float)posY}));
-                
+                currentPiece.setPosition(sf::Vector2f({ (float)posX, (float)posY }));
+
                 window.draw(currentPiece);
             }
         }
@@ -341,7 +345,7 @@ void drawBoard()
 
     std::vector<sf::RectangleShape> drawBoard = createThickGrid(cs, cs, cs / BOARD_SIZE, sf::Color(35, 71, 139), 5, startX, startY);
 
-    for (const auto &line : drawBoard)
+    for (const auto& line : drawBoard)
     {
         window.draw(line);
     }
@@ -360,183 +364,187 @@ void handleShowListOfFile()
     std::string fileName;
     std::string timeSaved, dateSaved;
 
-     std::ifstream f("timeFile.txt");
-     std::ifstream nOF("name_of_file.txt");
+    std::ifstream f("timeFile.txt");
+    //std::ifstream nOF("name_of_file.txt");
 
-     int numOfFile = 0;
+    int numOfFile = 0;
 
-     f >> numOfFile;
-     nOF >> numOfFile;
+    f >> numOfFile;
+    //nOF >> numOfFile;
 
-     if (numOfFile < 1) return;
+    if (numOfFile < 1) return;
 
-     timeFl.resize(numOfFile);
-     nameOfFile.resize(numOfFile);
+    timeFl.resize(numOfFile);
+    //nameOfFile.resize(numOfFile);
 
-     for (int i = 0; i < nameOfFile.size(); ++i) {
-         int m;
-         nOF >> m >> fileName;
-         f >> m >> dateSaved >> timeSaved;
+    for (int i = 0; i < timeFl.size(); ++i) {
 
-         char p = m + '0';
-         string s{ p };
+        //nOF >> m >> fileName;
+        f >> fileName >> dateSaved >> timeSaved;
 
-         timeFl[i].first = s;
-         timeFl[i].second.first = dateSaved;
-         timeFl[i].second.second = timeSaved;
-         nameOfFile[i] = fileName;
-     }
+    //    //cout << m << " " << fileName << "\n";
 
-     nOF.close();
-     f.close();
+    //    //char p = m + '0';
+    //    //string s{ p };
+
+        timeFl[i].first = fileName;
+        timeFl[i].second.first = dateSaved;
+        timeFl[i].second.second = timeSaved;
+    //    //nameOfFile[i] = fileName;
+
+    //    //if (fileName == "NULL") ++numFileDeleted;
+    }
+
+    //nOF.close();
+    f.close();
 }
 
 void displayListOfFile() {
     handleShowListOfFile();
 
-    if (timeFl.size() >= 1 && nameOfFile.size() >= 1) {
+    if (timeFl.size() >= 1) {
+        //std::cout << "Bello\n";
         sf::Text fileText(font, "", 30);
-        float col1_X = WINDOW_W - OPAREC_X - OPAREC_W / 2 - 75;
-        float col2_X = col1_X + 300;
+        float col1_X = WINDOW_W - OPAREC_X - OPAREC_W / 2 + 25;
+        float col2_X = col1_X + 200;
         float col3_X = col2_X + 200;
 
         if (endShowFile > timeFl.size()) endShowFile = timeFl.size();
 
         for (int i = startShowFile; i < endShowFile; ++i) {
-            float posY;
+            //if (nameOfFile[i] != "NULL") {
+                float posY;
 
-            if (endShowFile <= numFileShow) {
-                if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(i + 2);
-                else posY = OPAREC_Y - 100 + 65 * (float)(i + 2);
-            }
-            else {
-                float tmp = i - ((endShowFile - 1) - (numFileShow - 1));
-                if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(tmp + 2);
-                else posY = OPAREC_Y - 100 + 65 * (float)(tmp + 2);
-            }
-
-            //if (selectedFile == (int)i) {
-            if (selectedFile == i) {
-                if (handleLoadMiniBoard(i)) {
-                    updateCellAtScreen(1, 1, 1, 0);
+                if (endShowFile <= numFileShow) {
+                    if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(i + 2);
+                    else posY = OPAREC_Y - 100 + 65 * (float)(i + 2);
                 }
                 else {
-                    sf::Text text(font, langChoice == 1 ? L"Cann't load file!" : L"Không thể tải file!", 30);
+                    float tmp = i - ((endShowFile - 1) - (numFileShow - 1));
+                    if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(tmp + 2);
+                    else posY = OPAREC_Y - 100 + 65 * (float)(tmp + 2);
+                }
 
-                    text.setFillColor(sf::Color::Red);
+                if (selectedFile == i) {
+                    if (handleLoadMiniBoard(i)) {
+                        updateCellAtScreen(1, 1, 1, 0);
+                    }
+                    else {
+                        sf::Text text(font, langChoice == 1 ? L"Cann't load file!" : L"Không thể tải file!", 30);
 
-                    window.draw(text);
+                        text.setFillColor(sf::Color::Red);
+
+                        window.draw(text);
+                    }
+                }
+                else {
+                    fileText.setFillColor(sf::Color::White);
+                }
+
+                sf::Color textColor = (selectedFile == (int)i) ? sf::Color::Yellow : sf::Color::White;
+                fileText.setFillColor(textColor);
+
+                fileText.setString(timeFl[i].ff);
+                fileText.setPosition({ col1_X, posY });
+                window.draw(fileText);
+
+                fileText.setString(timeFl[i].ss.ff);
+                fileText.setPosition({ col2_X, posY });
+                window.draw(fileText);
+
+                fileText.setString(timeFl[i].ss.ss);
+                fileText.setPosition({ col3_X, posY });
+                window.draw(fileText);
+            //}
+
+            int itemChanged = 0;
+
+            if (keyPressTimer.getElapsedTime().asSeconds() >= KEY_DELAY_SECONDS)
+            {
+                if (rKey != 1 && (isKeyDown(Key::W) || isKeyDown(Key::Up)))
+                {
+                    --selectedFile;
+                    itemChanged = 1;
+                }
+                else if (rKey != 1 && (isKeyDown(Key::S) || isKeyDown(Key::Down)))
+                {
+                    ++selectedFile;
+                    itemChanged = 1;
                 }
             }
-            else {
-                fileText.setFillColor(sf::Color::White);
+
+            if (itemChanged)
+                keyPressTimer.restart();
+
+            if (selectedFile < 0)
+                selectedFile = timeFl.size() - 1;
+            if (selectedFile >= timeFl.size())
+                selectedFile = 0;
+
+            if (selectedFile >= endShowFile) {
+                ++startShowFile;
+                ++endShowFile;
             }
-
-            //window.draw(fileText);
-
-            sf::Color textColor = (selectedFile == (int)i) ? sf::Color::Yellow : sf::Color::White;
-            fileText.setFillColor(textColor);
-
-            fileText.setString(nameOfFile[i]);
-            fileText.setPosition({ col1_X, posY });
-            window.draw(fileText);
-
-            fileText.setString(timeFl[i].second.first);
-            fileText.setPosition({ col2_X, posY });
-            window.draw(fileText);
-
-            fileText.setString(timeFl[i].second.second);
-            fileText.setPosition({ col3_X, posY });
-            window.draw(fileText);
+            if (selectedFile < startShowFile) {
+                --startShowFile;
+                --endShowFile;
+            } 
         }
 
-        int itemChanged = 0;
-
-        if (keyPressTimer.getElapsedTime().asSeconds() >= KEY_DELAY_SECONDS)
-        {
-            if (rKey != 1 && (isKeyDown(Key::W) || isKeyDown(Key::Up)))
-            {
-                --selectedFile;
-                itemChanged = 1;
-            }
-            else if (rKey != 1 && (isKeyDown(Key::S) || isKeyDown(Key::Down)))
-            {
-                ++selectedFile;
-                itemChanged = 1;
-            }
-        }
-
-        if (currentMenu == 3) {
-            if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::L)) {
-                //sMM = 22;
-                loadFromMenu = 1;
-                loadGame(nameOfFile[selectedFile]);
-            }
-            else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::R)) {
-                rKey = 1;
-                oldFile = selectedFile;
-                drawRec = 1;
-            }
-            else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::D)) {
-                dKey = 1;
-                delFile = selectedFile;
-            }
-            else if (isKeyDown(Key::Escape)) {
-                sMM = 1;
-                currentMenu = 1;
-            }
-        }
-
-        if (currentMenu == 22) {
-
-            if (dKey != 1 && rKey != 1 && lKey == 1 && isKeyDown(Key::Space)) {
-                loadGame(nameOfFile[selectedFile]);
-                lKey = -1;
-            }
-            else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::R)) {
-                rKey = 1;
-                oldFile = selectedFile;
-                drawRec = 1;
-            }
-            else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::D)) {
-                dKey = 1;
-                delFile = selectedFile;
-            }
-            else if (isKeyDown(Key::X)) {
-                lKey = 0;
-            }
-        }
-
-        if (itemChanged)
-            keyPressTimer.restart();
-
-        if (selectedFile < 0)
-            selectedFile = timeFl.size() - 1;
-        if (selectedFile >= timeFl.size())
-            selectedFile = 0;
-
-        if (selectedFile >= endShowFile) {
-            ++startShowFile;
-            ++endShowFile;
-        }
-        if (selectedFile < startShowFile) {
-            --startShowFile;
-            --endShowFile;
-        }
-
-        std::vector<sf::RectangleShape> drawBoard = createThickGrid(450, 450, 45, sf::Color::White, 2, WINDOW_W / 2 + 100, currentMenu == 3 ? WINDOW_H / 2 - 225 : WINDOW_H / 2 - 275);
+        std::vector<sf::RectangleShape> drawBoard = createThickGrid(500, 500, 50, sf::Color::White, 2, WINDOW_W / 2 + 100, currentMenu == 3 ? WINDOW_H / 2 - 210 : WINDOW_H / 2 - 250);
 
         for (const auto& line : drawBoard) window.draw(line);
     }
- else {
-     sf::Text text(font, "No files saved yet", 30);
-     sf::FloatRect bounds = text.getLocalBounds();
+    else {
+        string but = currentMenu == 22 ? "X" : "ESC";
+        sf::Text text(font, langChoice == 1 ? "No files saved yet. Press " + but +  " to close" : "Chưa có file nào được lưu. Nhấn " + but + " để đóng", 40);
+        sf::FloatRect bounds = text.getLocalBounds();
 
-     text.setOrigin(bounds.getCenter());
-     text.setFillColor(sf::Color::White);
-     text.setPosition(sf::Vector2f({WINDOW_W / 2, WINDOW_H / 2 + 50}));
+        text.setOrigin(bounds.getCenter());
+        text.setFillColor(sf::Color::White);
+        text.setPosition(sf::Vector2f({ WINDOW_W / 2, WINDOW_H / 2 + 50 }));
 
-     window.draw(text);
+        window.draw(text);
+    }
+
+    if (currentMenu == 3) {
+        if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::L)) {
+            loadFromMenu = 1;
+            loadGame(nameOfFile[selectedFile]);
+        }
+        else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::R)) {
+            rKey = 1;
+            oldFile = selectedFile;
+            drawRec = 1;
+        }
+        else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::D)) {
+            dKey = 1;
+            delFile = selectedFile;
+        }
+        else if (isKeyDown(Key::Escape)) {
+            sMM = 1;
+            currentMenu = 1;
+        }
+    }
+
+    if (currentMenu == 22) {
+        if (dKey != 1 && rKey != 1 && lKey == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS) {
+            loadGame(nameOfFile[selectedFile]);
+            lKey = -1;
+            keyPressTimer.restart();
+        }
+        else if (dKey != 1 && rKey != 1 && lKey == 1 && isKeyDown(Key::R)) {
+            oldFile = selectedFile;
+            drawRec = 1;
+            rKey = 1;  
+        }
+        else if (dKey != 1 && rKey != 1 && lKey == 1 && isKeyDown(Key::D)) {
+            dKey = 1;
+            delFile = selectedFile;
+        }
+        else if (isKeyDown(Key::X)) {
+            lKey = 0;
+        }
     }
 }
 
@@ -597,8 +605,8 @@ void showPlayerInfo()
     }
     else
     {
-        woss1 << L"(X)  Di chuyển: " << player1.moves;
-        woss2 << L"(O)  Di chuyển: " << player2.moves;
+        woss1 << L"  (X)  Di chuyển: " << player1.moves;
+        woss2 << L"  (O)  Di chuyển: " << player2.moves;
 
         infoPlayer = {
             woss1.str(),
@@ -614,36 +622,36 @@ void showPlayerInfo()
 
     sf::FloatRect bounds = nameFile.getLocalBounds();
 
-    nameFile.setPosition(sf::Vector2f({ (float)WINDOW_W - bounds.getCenter().x*2 , (float)WINDOW_H - nameFile.getCharacterSize() - 25}));
+    nameFile.setPosition(sf::Vector2f({ (float)WINDOW_W - bounds.getCenter().x * 2 , (float)WINDOW_H - nameFile.getCharacterSize() - 25 }));
     nameFile.setFillColor(sf::Color::Black);
 
 
     for (size_t i = 0; i < infoPlayer.size(); ++i) {
-        sf::Text infoText(font, infoPlayer[i], 30);
+        sf::Text infoText(font, infoPlayer[i], 25);
 
         infoText.setFillColor(i == 0 ? sf::Color::Red : sf::Color(44, 101, 29));
 
         sf::FloatRect bounds = infoText.getLocalBounds();
         infoText.setOrigin(bounds.getCenter());
 
-        infoText.setPosition(sf::Vector2f({ (float)WINDOW_W / 2 - cs / 2 - 200, (float)WINDOW_H / 2 - cs / 2 + 100 * (i+1)}));
+        infoText.setPosition(sf::Vector2f({ (float)WINDOW_W / 2 - cs / 2 - 180, (float)WINDOW_H / 2 - cs / 2 + 90 * (i + 1) }));
         window.draw(infoText);
     }
 
     for (size_t i = 0; i < button.size(); ++i) {
-        sf::Text buttonText(font, button[i], 30);
+        sf::Text buttonText(font, button[i], 25);
 
         buttonText.setFillColor(sf::Color::Black);
 
         sf::FloatRect bounds = buttonText.getLocalBounds();
         buttonText.setOrigin(bounds.getCenter());
 
-        buttonText.setPosition(sf::Vector2f({ (float)((WINDOW_W / 2 - cs / 2) + 900), (float)WINDOW_H / 2 - cs / 2 + 100 * (i + 1)}));
+        buttonText.setPosition(sf::Vector2f({ (float)((WINDOW_W / 2 - cs / 2) + 780), (float)WINDOW_H / 2 - cs / 2 + 85 * (i + 1) }));
         window.draw(buttonText);
     }
 }
 
-void displayMessage(const std::string &message, int x, int y)
+void displayMessage(const std::string& message, int x, int y)
 {
     setColor(240);
     GotoXY(x, y);
@@ -684,7 +692,7 @@ void showWinEffect(int result, int player)
     {
         winText.setString(langChoice == 1 ? "DRAW!" : "Hòa!");
         winText.setFillColor(sf::Color::Blue);
-        
+
         // color = 240 + 12;
     }
     else if (player == 1)
@@ -695,22 +703,23 @@ void showWinEffect(int result, int player)
     }
     else
     {
-        winText.setString(langChoice == 1 ? L"PLAYER O WINS!" : L"NGƯOI CHƠI O THẮNG!");
+        winText.setString(langChoice == 1 ? L"PLAYER O WINS!" : L"NGƯỜI CHƠI O THẮNG!");
         winText.setFillColor(sf::Color(0, 128, 0));
         // color = 14;
     }
 
-    sf::FloatRect bounds = winText.getLocalBounds();
+    sf::FloatRect boundsWin = winText.getLocalBounds();
 
-    winText.setCharacterSize(100);
-    winText.setOrigin(bounds.getCenter());
-    winText.setPosition(sf::Vector2f({(float)WINDOW_W / 2 - (float)winText.getCharacterSize() / 2 - 200, (float)WINDOW_H / 2 - (float)winText.getCharacterSize() / 2 - 50}));
+    winText.setOrigin(boundsWin.getCenter());
+    winText.setPosition(sf::Vector2f({ (float)WINDOW_W / 2, (float)WINDOW_H / 2}));
+
+    
 
     // for (int i = 0; i < 3; ++i) {
     // setColor(color);
     // displayMessage(message, msg_x, msg_y);
     // Sleep(200);
-    // clearMessage(msg_x, msg_y, (int)message.length());
+    // clearMessage(msg_x, msg_y, (int)message.length());b
     // Sleep(200);
     //}
     // setColor(color);
@@ -719,19 +728,22 @@ void showWinEffect(int result, int player)
 }
 
 void handleMainMenu(const sf::Event& event) {
-    if (currentMenu == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+    bool isEnterPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter);
+    if (currentMenu == 1 && isEnterPressed && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS)
     {
         sMM = selectedItem + 1;
 
         if (selectedItem == 5)
             sMM = 0;
+        keyPressTimer.restart();
     }
 
     if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
-        if (currentMenu == 1 && selectedItem == 4 && keyPressed->code == sf::Keyboard::Key::Space) {
+        if (currentMenu == 1 && selectedItem == 4 && keyPressed->code == sf::Keyboard::Key::Enter) {
             langChoice = (langChoice == 1) ? 2 : 1;
         }
     }
+
 }
 
 void showMainMenu()
@@ -743,11 +755,11 @@ void showMainMenu()
 
     if (langChoice == 1)
     {
-        menuItems = {L"New Game", L"Load Game", L"About", L"Settings", L"Language: English", L"Exit"};
+        menuItems = { L"New Game", L"Load Game", L"About", L"Settings", L"Language: English", L"Exit" };
     }
     else
     {
-        menuItems = {L"Trò Chơi Mới", L"Tải Trò Chơi", L"Giới Thiệu", L"Cài Đặt", L"Ngôn ngữ: Tiếng Việt", L"Thoát "};
+        menuItems = { L"Trò Chơi Mới", L"Tải Trò Chơi", L"Giới Thiệu", L"Cài Đặt", L"Ngôn ngữ: Tiếng Việt", L"Thoát " };
     }
 
     sf::Text menuText(font, "", 50);
@@ -764,7 +776,7 @@ void showMainMenu()
     //menuTitle.setPosition(sf::Vector2f({WINDOW_W / 2, WINDOW_H / 2 - 300}));
 
     //window.draw(menuTitle);
-    
+
     // int consoleWidth = 120;
     // int boxWidth = 40;
     // int boxHeight = totalItems * 2 + 3;
@@ -848,7 +860,7 @@ void showMainMenu()
 
     if (keyPressTimer.getElapsedTime().asSeconds() >= KEY_DELAY_SECONDS)
     {
-        
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
         {
             --selectedItem;
@@ -873,125 +885,29 @@ void showMainMenu()
 
 void showModeMenu(int type)
 {
-    //system("cls");
-    //setColor(240);
-
-    //vector<string> menuItems;
-
-    //int totalItems = menuItems.size();
-    //int selectedItem = 0;
-    //int consoleWidth = 120;
-    //int boxWidth = 40;
-    //int boxHeight = totalItems * 2 + 3;
-
-    //int menuX = (consoleWidth - boxWidth) / 2;
-    //int menuY = 12;
-    //vector<string> logoLines = {
-    //    "  __  __   ______   _   _   _    _  ",
-    //    " |  \\/  | |  ____| | \\ | | | |  | | ",
-    //    " | \\  / | | |__    |  \\| | | |  | | ",
-    //    " | |\\/| | |  __|   | . ` | | |  | | ",
-    //    " | |  | | | |____  | |\\  | | |__| | ",
-    //    " |_|  |_| |______| |_| \\_|  \\____/  "};
-    //int logoWidth = 0;
-    //for (const string &line : logoLines)
-    //{
-    //    if (line.length() > logoWidth)
-    //        logoWidth = line.length();
-    //}
-    //int logoX = (consoleWidth - logoWidth) / 2;
-    //int logoY = 4;
-    //for (const string &line : logoLines)
-    //{
-    //    GotoXY(logoX, logoY++);
-    //    setColor(240 + 2);
-    //    cout << line;
-    //}
-    //while (true)
-    //{
-    //    drawMenu(menuX, menuY, boxWidth, boxHeight);
-
-    //    for (int i = 0; i < totalItems; i++)
-    //    {
-    //        int itemY = menuY + 2 + i * 2;
-    //        int textX = menuX + (boxWidth - (int)menuItems[i].length()) / 2;
-
-    //        if (i == selectedItem)
-    //        {
-    //            string label = " >> " + menuItems[i] + " << ";
-    //            int labelX = menuX + (boxWidth - (int)label.length()) / 2;
-
-    //            GotoXY(labelX, itemY);
-    //            setColor(240 + 12);
-    //            cout << label;
-    //        }
-    //        else
-    //        {
-    //            GotoXY(textX, itemY);
-    //            setColor(240);
-    //            cout << menuItems[i];
-    //        }
-    //    }
-
-    //    int key = _getch();
-    //    if (key == 224)
-    //    {
-    //        key = _getch();
-    //        if (key == 72)
-    //            selectedItem--;
-    //        if (key == 80)
-    //            selectedItem++;
-    //    }
-    //    else if (key == 'w' || key == 'W')
-    //        selectedItem--;
-    //    else if (key == 's' || key == 'S')
-    //        selectedItem++;
-    //    else if (key == 13)
-    //    {
-    //        return selectedItem + 1;
-    //    }
-
-    //    if (selectedItem < 0)
-    //        selectedItem = totalItems - 1;
-    //    if (selectedItem >= totalItems)
-    //        selectedItem = 0;
-    //}
     vector<wstring> menuItems;
     if (langChoice == 1) {
-        menuItems = !type ? vector<wstring>{L"2 PLAYERS", L"PLAY WITH BOT", L"BACK"} : vector<wstring>{ L"EASY", L"MEDIUM", L"HARD"};
-    } else {
-        menuItems = !type ? vector<wstring>{L"2 NGƯỜI CHƠI", L"CHƠI VỚI MÁY", L"QUAY LẠI"} : vector<wstring>{ L"DỄ", L"TRUNG BÌNH", L"KHÓ"};
+        menuItems = !type ? vector<wstring>{L"2 PLAYERS", L"PLAY WITH BOT", L"BACK"} : vector<wstring>{ L"EASY", L"MEDIUM", L"HARD" };
     }
-    //colorBackGround = sf::Color::Cyan;
-    
+    else {
+        menuItems = !type ? vector<wstring>{L"2 NGƯỜI CHƠI", L"CHƠI VỚI MÁY", L"QUAY LẠI"} : vector<wstring>{ L"DỄ", L"TRUNG BÌNH", L"KHÓ" };
+    }
     int totalItems = menuItems.size();
     const unsigned int textSize = 50;
-    sf::Text menuText(font, "", textSize);    
+    sf::Text menuText(font, "", textSize);
     const float lineSpacing = 100.0f;
     const float totalHeight = totalItems * lineSpacing;
     const float startY = (WINDOW_H / 2.0f) - (totalHeight / 2.0f);
 
     for (size_t i = 0; i < totalItems; ++i)
     {
-        // int itemY = menuY + 2 + i * 2;
-        // int textX = menuX + (boxWidth - (int)menuItems[i].length()) / 2;
 
         if ((int)i == selectedDiff) {
-            // string label = " >> " + menuItems[i] + " << ";
-            // int labelX = menuX + (boxWidth - (int)label.length()) / 2;
-
-            // GotoXY(labelX, itemY);
-            // setColor(240 + 12);
-            // cout << label;
             menuText.setString(menuItems[i]);
             menuText.setFillColor(sf::Color::Yellow);
         }
         else
         {
-            // GotoXY(textX, itemY);
-            // setColor(240);
-            // cout << menuItems[i];
-
             menuText.setFillColor(sf::Color::White);
             menuText.setString(menuItems[i]);
         }
@@ -999,7 +915,7 @@ void showModeMenu(int type)
 
         sf::FloatRect bounds = menuText.getLocalBounds();
         menuText.setOrigin(bounds.getCenter());
-        menuText.setPosition(sf::Vector2f({ WINDOW_W / 2, currentY + 25}));
+        menuText.setPosition(sf::Vector2f({ WINDOW_W / 2, currentY + 25 }));
 
         window.draw(menuText);
     }
@@ -1011,7 +927,7 @@ void showModeMenu(int type)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
         {
             --selectedDiff;
-            itemChanged = 1;            
+            itemChanged = 1;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
         {
@@ -1020,16 +936,13 @@ void showModeMenu(int type)
         }
     }
 
-    if (currentMenu == 21) 
+    if (currentMenu == 21)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) diffChoice = selectedItem + 1;
-        //if (isKeyDown(Key::Escape)) {
-        //    currentMenu = 20;
-        //    //sMM = 20;
-        //}
-        //sMM = selectedItem + 1;
-        //return selectedItem + 1;
-        
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS) {
+            diffChoice = selectedItem + 1;
+            keyPressTimer.restart();
+        }
+
     }
 
     if (itemChanged) keyPressTimer.restart();
@@ -1053,9 +966,33 @@ void askContinue()
     // langChoice ? displayMessage("Continue? (Y/N)", msg_x, msg_y) : displayMessage("Tiếp tục? (O/F)", msg_x, msg_y);
     // setColor(240);
 
-    continueText.setString(langChoice ? "Continue? (Y/N)" : "Tiếp tục? (O/F)");
-    continueText.setFillColor(sf::Color::Black);
-    continueText.setPosition(sf::Vector2f({(float)25, (float)WINDOW_H - continueText.getCharacterSize() - 25}));
+    vector<wstring> conText;
+
+    if (langChoice == 1) {
+        conText = {
+            L"Continue? (Y/N)",
+            winText.getString() != "" ? L"Press X to close message" : L""
+        };
+    }
+    else {
+        conText = {
+            L"Tiếp tục? (Y/N)",
+            winText.getString() != "" ? L"Nhấn phím X để đóng thông báo" : L""
+        };
+    }
+
+    for (size_t i = 0; i < conText.size(); ++i) {
+        int tmp = i % 2 == 0 ? 60 : 25;
+
+        if (winText.getString() == "") tmp = 25;
+
+        continueText.setString(conText[i]);
+        continueText.setFillColor(sf::Color::Black);
+        continueText.setPosition(sf::Vector2f({ (float)25, (float)WINDOW_H - continueText.getCharacterSize() - tmp}));
+
+        window.draw(continueText);
+    }
+
 
     // char c;
     // while (true) {
@@ -1085,7 +1022,7 @@ void askContinue()
     }
 }
 
-string getFileNameFromUser(const string &prompt, int x, int y)
+string getFileNameFromUser(const string& prompt, int x, int y)
 {
     string filename;
     displayMessage(prompt, x, y);
@@ -1125,12 +1062,11 @@ void showAbout()
             L"TIP: Game has 10x10 checkers, bet 5 consecutive cards to win.",
             L"CONTROL KEYS:",
             L"- W/A/S/D or arrow: Move",
-            L"- Space: Select",
-            L"- Enter: Confirm",
+            L"- Enter: Select / Confirm",
             L"- T: Save game",
             L"- L: Load game",
             L"- X: Close messange",
-            L"Press ESC to go back..."};
+            L"Press ESC to go back..." };
     }
     else
     {
@@ -1153,16 +1089,15 @@ void showAbout()
             L"TRÒ CHƠI : CARO - PHIÊN BẢN CONSOLE",
             L"Phiên bản: 1.0",
             L"Tác giả : Nhóm 11",
-            L"Ngôn ngữ lập trình : C++ (Console)",
+            L"Ngôn ngữ lập trình : C++ (SFML)",
             L"MẸO : Bàn cờ 10x10, người chơi đặt 5 quân liên tiếp để thắng.",
             L"PHÍM ĐIỀU KHIỂN : ",
             L"- W / A / S / D hoặc phím di chuyển : Di chuyển",
-            L"- Phím cách: Xác nhận",
-            L"- Enter: Đánh cờ",
+            L"- Enter: Xác nhận / Đánh cờ",
             L"- T: Lưu game",
             L"- L: Tải game",
             L"- X: Tắt thông báo",
-            L"Nhấn phím ESC để thoát..."};
+            L"Nhấn phím ESC để thoát..." };
     }
 
     sf::Text title(font, outAboutTitile, 80);
@@ -1170,7 +1105,7 @@ void showAbout()
     sf::FloatRect bounds = title.getLocalBounds();
 
     title.setOrigin(bounds.getCenter());
-    title.setPosition(sf::Vector2f({WINDOW_W / 2, OPAREC_Y - title.getCharacterSize() / 2}));
+    title.setPosition(sf::Vector2f({ WINDOW_W / 2, OPAREC_Y - title.getCharacterSize() / 2 }));
     title.setFillColor(sf::Color(35, 71, 139));
 
     window.draw(title);
@@ -1179,7 +1114,7 @@ void showAbout()
     {
         sf::Text text(font, outAbout[i], 27);
         text.setFillColor(sf::Color::Black);
-        text.setPosition(sf::Vector2f({WINDOW_W - OPAREC_X - OPAREC_W / 2 + 25, OPAREC_Y - 75 + 45 * (float)(i + 2)}));
+        text.setPosition(sf::Vector2f({ WINDOW_W - OPAREC_X - OPAREC_W / 2 + 100, OPAREC_Y - 75 + 47 * (float)(i + 2) }));
 
         window.draw(text);
     }
@@ -1215,7 +1150,7 @@ void showPlayerMenu()
     const float totalHeight = playerChoice.size() * lineSpacing;
     const float startY = (WINDOW_H / 2.0f) - (totalHeight / 2.0f);
 
-    sf::Text playerChoiceText(font, "", textSize);    
+    sf::Text playerChoiceText(font, "", textSize);
 
     for (size_t i = 0; i < playerChoice.size(); ++i)
     {
@@ -1233,7 +1168,7 @@ void showPlayerMenu()
         float currentY = startY + (i * lineSpacing);
         sf::FloatRect bounds = playerChoiceText.getLocalBounds();
         playerChoiceText.setOrigin(bounds.getCenter());
-        playerChoiceText.setPosition(sf::Vector2f({ WINDOW_W / 2, currentY + 25}));
+        playerChoiceText.setPosition(sf::Vector2f({ WINDOW_W / 2, currentY + 25 }));
 
         window.draw(playerChoiceText);
     }
@@ -1254,7 +1189,7 @@ void showPlayerMenu()
         }
     }
 
-    if (currentMenu == 20 && isKeyDown(Key::Space))
+    if (currentMenu == 20 && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS)
     {
         if (selectedMode == 0)
         {
@@ -1264,6 +1199,7 @@ void showPlayerMenu()
         {
             sMM = 22;
         }
+        keyPressTimer.restart();
     }
 
     if (currentMenu == 20 && isKeyDown(Key::Escape)) {
@@ -1599,15 +1535,15 @@ void showButtonLoad(int m) {
     if (langChoice == 1) {
         loadButtonText = {
             m == 3 ? L"L: Load File" : L"Space: Load File",
-            L"R: Rename File",
+            L"  R: Rename File",
             L"D: Delete File",
-            m == 3 ? L"ESC: Back" : L"X: Back"
+            m == 3 ? L"ESC: Back" : L"   X: Back"
         };
     }
     else {
         loadButtonText = {
             m == 3 ? L"L: Tải File" : L"Phím cách: Tải File",
-            L"R: Đổi tên File",
+            L"  R: Đổi tên File",
             L"D: Xóa File",
             m == 3 ? L"ESC: Quay lại" : L"X: Quay lại"
         };
@@ -1617,13 +1553,29 @@ void showButtonLoad(int m) {
         for (size_t i = 0; i < loadButtonText.size(); ++i) {
             float posX, posY;
 
-            if (i < 2) {
-                posX = WINDOW_W / 2 - OPAREC_W / 2 + 400 * i + 50;
-                posY = currentMenu == 3 ? WINDOW_H / 2 + 225 : WINDOW_H / 2 + 175;
+            if (m == 3) {
+                if (i < 2) {
+                    if (langChoice == 2) posX = WINDOW_W / 2 - OPAREC_W / 2 + 300 * i + 100;
+                    else posX = WINDOW_W / 2 - OPAREC_W / 2 + 350 * i + 125;
+                    posY = currentMenu == 3 ? WINDOW_H / 2 + 200 : WINDOW_H / 2 + 175;
+                }
+                else {
+                    if (langChoice == 2) posX = WINDOW_W / 2 - OPAREC_W / 2 + 300 * (i - 2) + 100;
+                    else posX = WINDOW_W / 2 - OPAREC_W / 2 + 300 * (i - 2) + 140;
+                    posY = currentMenu == 3 ? WINDOW_H / 2 + 275 : WINDOW_H / 2 + 250;
+                }
             }
             else {
-                posX = WINDOW_W / 2 - OPAREC_W / 2 + 350 * (i - 2) + 50;
-                posY = currentMenu == 3 ? WINDOW_H / 2 + 300 : WINDOW_H / 2 + 250;
+                if (i < 2) {
+                    if (langChoice == 2) posX = WINDOW_W / 2 - OPAREC_W / 2 + 350 * i + 175;
+                    else posX = WINDOW_W / 2 - OPAREC_W / 2 + 350 * i + 150;
+                    posY = currentMenu == 3 ? WINDOW_H / 2 + 200 : WINDOW_H / 2 + 175;
+                }
+                else {
+                    if (langChoice == 2) posX = WINDOW_W / 2 - OPAREC_W / 2 + 410 * (i - 2) + 95;
+                    else posX = WINDOW_W / 2 - OPAREC_W / 2 + 300 * (i - 2) + 125;
+                    posY = currentMenu == 3 ? WINDOW_H / 2 + 275 : WINDOW_H / 2 + 250;
+                }
             }
 
             sf::Text showText(font, loadButtonText[i], 35);
@@ -1674,7 +1626,7 @@ void showInputText(int slr, const sf::Event& event) {
 
     sf::FloatRect bounds = titleRecInput.getLocalBounds();
     titleRecInput.setOrigin(bounds.getCenter());
-    titleRecInput.setPosition(sf::Vector2f({WINDOW_W / 2 - (float)titleRecInput.getCharacterSize() / 2 + 15, slr == 3 ? (float)WINDOW_H / 2 - 50 : (float)WINDOW_H / 2 - 100}));
+    titleRecInput.setPosition(sf::Vector2f({ WINDOW_W / 2 - (float)titleRecInput.getCharacterSize() / 2 + 15, slr == 3 ? (float)WINDOW_H / 2 - 50 : (float)WINDOW_H / 2 - 100 }));
     titleRecInput.setFillColor(sf::Color::Black);
 
     int res = -1;
@@ -1691,7 +1643,16 @@ void showInputText(int slr, const sf::Event& event) {
         else if (unicode == 13)
         {
             if (slr == 3) {
-                res = renameGame(nameOfFile[oldFile], inputString);                
+                res = renameGame(nameOfFile[oldFile], inputString);
+
+                inputText.setString("");
+                titleRecInput.setString("");
+                inputString = "";
+                rKey = 0;
+                tKey = 0;
+                pressR = 0;
+                oldFile = -1;
+                drawRec = 0;
             }
 
             if (slr == 1) {
@@ -1709,7 +1670,7 @@ void showInputText(int slr, const sf::Event& event) {
             }
         }
         else if (unicode > 32 && unicode != 127)
-        {   
+        {
             ++pressR;
             if (pressR != 1 && (currentMenu == 3 || currentMenu == 22) && inputString.length() < 11)
             {
@@ -1724,7 +1685,7 @@ void showInputText(int slr, const sf::Event& event) {
         sf::FloatRect bounds = inputText.getLocalBounds();
 
         inputText.setOrigin(bounds.getCenter());
-        inputText.setPosition(sf::Vector2f({ WINDOW_W / 2, slr == 3 ? WINDOW_H / 2 + 65 : (float) WINDOW_H / 2 + 15 }));
+        inputText.setPosition(sf::Vector2f({ WINDOW_W / 2, slr == 3 ? WINDOW_H / 2 + 65 : (float)WINDOW_H / 2 + 15 }));
         inputText.setCharacterSize(40);
     }
 
@@ -1744,6 +1705,6 @@ void showInputText(int slr, const sf::Event& event) {
             }
         }
 
-        
+
     }
 }
