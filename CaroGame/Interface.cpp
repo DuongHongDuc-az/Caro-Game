@@ -55,8 +55,10 @@ void drawWinningLine(float xStart, float yStart, float xEnd, float yEnd) {
     line.setSize(sf::Vector2f(length, 3.f));
 
     line.setFillColor(turn == -1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
+    if (res == 0) line.setFillColor(sf::Color::Blue);
     line.setPosition(angle < 90 ? sf::Vector2f({ startX + (xStart) * (cs / BOARD_SIZE), angle != 0 ? startY + yStart * (cs / BOARD_SIZE) : startY + 30 + yStart * (cs / BOARD_SIZE) }) : sf::Vector2f({ startX + 30 + xStart * (cs / BOARD_SIZE), startY + yStart * (cs / BOARD_SIZE) }));
-    if (dy != 0 ) line.setRotation(angle < 90 ? sf::degrees(angle) : sf::degrees(90));
+    if (angle >= 135) line.setPosition(sf::Vector2f({ startX + (xStart + 1) * (cs / BOARD_SIZE), startY + yStart * (cs / BOARD_SIZE) }));
+    if (dy != 0 ) line.setRotation(angle < 90 || angle >= 135 ? sf::degrees(angle) : sf::degrees(90));
 
     window.draw(line);
 }
@@ -274,7 +276,6 @@ void startGame() {
 
                 if (drawRec == 1 && rKey == 1) {
                     window.draw(recBig);
-                    //std::cout << "Draw done \n";
                 }
                 window.draw(titleRecInput);
                 if (drawRec == 1 && rKey == 1) window.draw(recSmall);
@@ -292,16 +293,18 @@ void startGame() {
                 winText.setString("");
             }
 
-            if (res == 1) {
-                pair<pii, pii> res = getWinLine(board);
-
-                float xStart = res.ss.ss;
-                float yStart = res.ss.ff;
-                float xEnd = res.ff.ss;
-                float yEnd = res.ff.ff;
-
+            if (res == 0 || res == 1) {
                 askContinue();
-                drawWinningLine(xStart, yStart, xEnd, yEnd);
+                if (res == 1) {
+                    pair<pii, pii> res = getWinLine(board);
+
+                    float xStart = res.ss.ss;
+                    float yStart = res.ss.ff;
+                    float xEnd = res.ff.ss;
+                    float yEnd = res.ff.ff;
+                    drawWinningLine(xStart, yStart, xEnd, yEnd);
+                }
+
                 if (winText.getString() != "") drawOpaRec(1200, 175, WINDOW_W / 2, WINDOW_H / 2 - 75, sf::Color(255, 255, 255, 175), 1);
             }
 
