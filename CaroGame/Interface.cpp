@@ -13,7 +13,7 @@ const float OPAREC_W = 1200;
 const float OPAREC_H = 600;
 const float OPAREC_X = WINDOW_W / 2;
 const float OPAREC_Y = WINDOW_H - OPAREC_H - 60;
-sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "CSLT - Group 11");
+sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "CSLT - Group 11 - Caro game", sf::Style::Titlebar | sf::Style::Close);
 sf::Color colorBackGround = sf::Color::Black;
 sf::Text titleRecInput(font, "", 50);
 sf::RectangleShape recBig;
@@ -23,7 +23,7 @@ sf::RectangleShape toggleThumb;
 sf::Text cursor(font, "X", 35);
 sf::Text playerX(font, "X", 15);
 sf::Text playerO(font, "O", 15);
-sf::Text winText(font, "", 35);
+sf::Text winText(font, "", 100);
 sf::Text continueText(font, "", 35);
 sf::Text saveText(font, "", 35);
 sf::Text loadText(font, "", 10);
@@ -41,28 +41,28 @@ static sf::RectangleShape grayBar;
 static sf::RectangleShape colorBar;
 static const float BAR_WIDTH = 1000;
 static const float BAR_HEIGHT = 50;
-static const float SPEED = 0.3; 
+static const float SPEED = 0.3f;
 static float currentWidthBar = 0;
 
 void drawWinningLine(float xStart, float yStart, float xEnd, float yEnd) {
     float dx = xEnd - xStart;
     float dy = yEnd - yStart;
-    float length = std::sqrt(dx * dx + dy * dy);
+    float length = (std::sqrt(dx * dx + dy * dy)) * 75;
     float angle = std::atan2(dy, dx) * 180 / 3.14159f;
 
     sf::RectangleShape line;
-    line.setSize(sf::Vector2f(length, 5.f)); 
-    line.setFillColor(turn == -1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
-    line.setOrigin(sf::Vector2f({ 0, 2.5f }));
-    line.setPosition(sf::Vector2f({xStart, yStart}));
-    line.setRotation(sf::degrees(angle));
 
-    //std::cout << xStart << " " << yStart << " " << xEnd << " " << yEnd << "\n";
+    line.setSize(sf::Vector2f(length, 3.f));
+
+    line.setFillColor(turn == -1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
+    line.setPosition(angle < 90 ? sf::Vector2f({ startX + (xStart) * (cs / BOARD_SIZE), angle != 0 ? startY + yStart * (cs / BOARD_SIZE) : startY + 30 + yStart * (cs / BOARD_SIZE) }) : sf::Vector2f({ startX + 30 + xStart * (cs / BOARD_SIZE), startY + yStart * (cs / BOARD_SIZE) }));
+    if (dy != 0 ) line.setRotation(angle < 90 ? sf::degrees(angle) : sf::degrees(90));
+
     window.draw(line);
 }
 
 void soundBar(int w) {
-    float barW = 800, barH = 30;
+    float barW = 700, barH = 30;
 
     grayBar.setSize(sf::Vector2f({ barW, barH }));
     grayBar.setPosition(sf::Vector2f({ (WINDOW_W - barW) / 2 - 100, 475 - barH }));
@@ -71,7 +71,7 @@ void soundBar(int w) {
     colorBar.setFillColor(sf::Color::Cyan);
     colorBar.setPosition(grayBar.getPosition());
 
-    colorBar.setSize(sf::Vector2f({(float)w * 8, barH}));
+    colorBar.setSize(sf::Vector2f({ (float)w * (barW / 100), barH}));
     window.draw(grayBar);
     window.draw(colorBar);
 }
@@ -83,16 +83,20 @@ void initKeyToggle(sf::Vector2f pos) {
 
     toggleThumb.setSize({ thumbW, thumbH });
     toggleThumb.setFillColor(sf::Color::White);
-    toggleThumb.setPosition(sf::Vector2f({pos.x + trackW - thumbW, pos.y + trackH - thumbH }));
+    toggleThumb.setPosition(sf::Vector2f({ pos.x + trackW - thumbW, pos.y + trackH - thumbH }));
 }
 
-void drawOpaRec(float w, float h, float x, float y, sf::Color color) {
+void drawOpaRec(float w, float h, float x, float y, sf::Color color, int outline) {
     sf::RectangleShape opaRec;
 
-    opaRec.setSize(sf::Vector2f({w, h}));
-    opaRec.setOrigin(sf::Vector2f({OPAREC_W / 2, 0}));
+    opaRec.setSize(sf::Vector2f({ w, h }));
+    opaRec.setOrigin(sf::Vector2f({ OPAREC_W / 2, 0 }));
     opaRec.setPosition(sf::Vector2f({ x, y }));
     opaRec.setFillColor(color);
+    if (outline != 0) {
+        opaRec.setOutlineThickness(5.0f);
+        opaRec.setOutlineColor(turn == 1 ? sf::Color(0, 128, 0) : sf::Color(210, 4, 45));
+    }
 
     window.draw(opaRec);
 }
@@ -149,7 +153,7 @@ std::vector<sf::RectangleShape> createThickGrid(int w, int h, int cellSize, sf::
 
 void declare() {
     cursor.setFillColor(sf::Color::Black);
-    cursor.setPosition(sf::Vector2f({ startX + 22, startY + 11 }));
+    cursor.setPosition(sf::Vector2f({ startX + 18, startY + 6 }));
 
     if (!texMain.loadFromFile("image/background.JPG")) std::cout << "Error at background of main\n";
     if (!texMenu.loadFromFile("image/backgroundMainMenu.png")) std::cout << "Error at background of menu\n";
@@ -158,11 +162,12 @@ void declare() {
     if (!texBoard.loadFromFile("image/backgroundBoard.png")) std::cout << "Error at background of board\n";
     if (!texSet.loadFromFile("image/backgroundSet.png")) std::cout << "Error at background of set\n";
 
-    initKeyToggle({ WINDOW_W - OPAREC_X - OPAREC_W / 2 + 350, OPAREC_Y + 85});
+    initKeyToggle({ WINDOW_W - OPAREC_X - OPAREC_W / 2 + 425, OPAREC_Y + 85 });
 }
 
 void startGame() {
-    //currentMenu = 22;
+    //currentMenu = 3;
+    //lKey = 1;
 
     const sf::Color colorGrid(128, 128, 128, 100);
     sf::Font fontTitle("Pixelic.ttf");
@@ -172,16 +177,17 @@ void startGame() {
 
     title.setFillColor(sf::Color::White);
     title.setOrigin(bounds.getCenter());
-    title.setPosition(sf::Vector2f({ WINDOW_W / 2, WINDOW_H / 2 - 125}));
+    title.setPosition(sf::Vector2f({ WINDOW_W / 2, WINDOW_H / 2 - 125 }));
     title.setStyle(sf::Text::Bold);
 
     declare();
-    
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
-            } else if (const auto* keyL = event->getIf<sf::Event::KeyPressed>()) {
+            }
+            else if (const auto* keyL = event->getIf<sf::Event::KeyPressed>()) {
                 if (lKey == -1 && keyL->code != sf::Keyboard::Key::L) {
                     lKey = 0;
                 }
@@ -202,12 +208,14 @@ void startGame() {
                     if (keyPressed->code == sf::Keyboard::Key::L) sMM = 22;
                 }
             }
-            if (currentMenu == 3 && rKey == 1) handleRename(*event);
-            if (currentMenu == 3 && dKey == 1) {
-                handleDelete();
+            if ((currentMenu == 3 || currentMenu == 22) && rKey == 1) handleRename(*event);
+            if ((currentMenu == 3 || currentMenu == 22) && dKey == 1) {
+                if (const auto* keyPressed = event->getIf<sf::Event::KeyReleased>()) {
+                    if (keyPressed->code == sf::Keyboard::Key::D) handleDelete();
+                }               
             }
         }
-        
+
         //window.clear(colorBackGround);
         window.clear();
 
@@ -233,11 +241,11 @@ void startGame() {
             backgroundSprite.setTexture(texBoard, true);
             textureSize = texBoard.getSize();
         }
-        
+
         sf::Vector2u windowSize = window.getSize();
         float scaleX = (float)windowSize.x / textureSize.x;
         float scaleY = (float)windowSize.y / textureSize.y;
-        
+
         backgroundSprite.setScale(sf::Vector2f({ scaleX, scaleY }));
 
         window.draw(backgroundSprite);
@@ -253,21 +261,21 @@ void startGame() {
             showPlayerInfo();
 
             window.draw(cursor);
-            window.draw(continueText);
             window.draw(saveText);
             window.draw(loadText);;
             window.draw(inputText);
             window.draw(nameFile);
             updateCellAtScreen(1, 1, 1, 1);
 
-            window.draw(winText);
-
             if (lKey == 1 && tKey != 1) {
-                drawOpaRec(1400, OPAREC_H, WINDOW_W / 2 - 100, WINDOW_H - OPAREC_H - 100, sf::Color(34, 37, 93));
+                drawOpaRec(1250, OPAREC_H, WINDOW_W / 2 - 25, WINDOW_H - OPAREC_H - 100, sf::Color(34, 37, 93));
                 displayListOfFile();
                 showButtonLoad(22);
 
-                if (drawRec == 1 && rKey == 1) window.draw(recBig);
+                if (drawRec == 1 && rKey == 1) {
+                    window.draw(recBig);
+                    //std::cout << "Draw done \n";
+                }
                 window.draw(titleRecInput);
                 if (drawRec == 1 && rKey == 1) window.draw(recSmall);
                 window.draw(inputText);
@@ -287,14 +295,17 @@ void startGame() {
             if (res == 1) {
                 pair<pii, pii> res = getWinLine(board);
 
-                float xStart = res.first.first;
-                float yStart = res.first.second;
-                float xEnd = res.second.first;
-                float yEnd = res.second.second;
+                float xStart = res.ss.ss;
+                float yStart = res.ss.ff;
+                float xEnd = res.ff.ss;
+                float yEnd = res.ff.ff;
 
                 askContinue();
                 drawWinningLine(xStart, yStart, xEnd, yEnd);
+                if (winText.getString() != "") drawOpaRec(1200, 175, WINDOW_W / 2, WINDOW_H / 2 - 75, sf::Color(255, 255, 255, 175), 1);
             }
+
+            window.draw(winText);
         }
         if (currentMenu == 3) {
             displayListOfFile();
@@ -310,7 +321,7 @@ void startGame() {
 
             window.draw(titleLoad);
 
-            if (rKey == 1) {                
+            if (rKey == 1) {
                 if (drawRec == 1) window.draw(recBig);
                 window.draw(titleRecInput);
                 if (drawRec == 1) window.draw(recSmall);
@@ -318,7 +329,7 @@ void startGame() {
             }
         }
         if (currentMenu == 4) {
-            showAbout();            
+            showAbout();
         }
         if (currentMenu == 5) {
             showSettingsMenu();

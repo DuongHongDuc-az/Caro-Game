@@ -104,86 +104,39 @@ static void handleSettings(const sf::Event& event)
 }
 extern void randomizeSideImage();
 
-void run(const sf::Event &event)
+void run(const sf::Event& event)
 {
-    // fixConsoleWindow();
-
     int choice = sMM;
-    // while (true) {
 
     switch (choice) {
     case 1: {
         if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
-            if (keyPressed->code == sf::Keyboard::Key::Space) currentMenu = 20;
+            if (keyPressed->code == sf::Keyboard::Key::Enter) currentMenu = 20;
             if (keyPressed->code == sf::Keyboard::Key::Escape) currentMenu = 1;
         }
-        
-        //int done = 0;
-        //while (!done)
-        //{
-        //    int modeChoice = showModeMenu();
-        //    switch (modeChoice)
-        //    {
-        //    case 1:
-        //        randomizeSideImage();
-        //        resetData();
-        //        runGameLoop(event);
-        //        break;
-        //    case 2:
-        //    {
-                //int diffChoice = showModeMenu(1);
-        //        if (diffChoice < 4)
-        //            DIFF = diffChoice;
-        //        else
-        //            break;
-        //        randomizeSideImage();
-        //        resetData();
-        //        handleBotPlay(event);
-        //        done = 1;
-        //        break;
-        //    }
-        //    case 3:
-        //        done = 1;
-        //        break;
-        //    }
-        //}
         break;
     }
     case 2:
     {
         currentMenu = 3;
-        // handleLoad(true);
         break;
     }
     case 21:
     {
         if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
-            if (currentMenu == 21 && keyPressed->code == sf::Keyboard::Key::Space) {
+            if (currentMenu == 21 && keyPressed->code == sf::Keyboard::Key::Enter) {
                 currentMenu = 22;
                 sMM = 211;
             }
 
-            if (currentMenu == 20 && keyPressed->code == sf::Keyboard::Key::Space) {
+            if (currentMenu == 20 && keyPressed->code == sf::Keyboard::Key::Enter) {
                 currentMenu = 21;
-                //sMM = 211;
             }
-
-            
         }
 
-        //int diffChoice = 0;
 
         if (0 < diffChoice && diffChoice < 4) DIFF = diffChoice;
         else break;
-        //        randomizeSideImage();
-        //resetData();
-        //handleBotPlay(event);
-
-        //done = 1;
-//        break;
-//    }
-//    case 3:
-//        done = 1;
         break;
     }
     case 211: {
@@ -195,7 +148,7 @@ void run(const sf::Event &event)
         }
         else
             statusOfGame = 2;
-        handleBotPlay(event); 
+        handleBotPlay(event);
         AudioManager::getInstance().stopBackgroundMusic();
 
         break;
@@ -212,7 +165,6 @@ void run(const sf::Event &event)
         else currentMenu = 22;
 
         ++statusOfGame;
-        // randomizeSideImage();
         if (statusOfGame == 1 && loadFromMenu != 1)
         {
             resetData();
@@ -250,16 +202,6 @@ void run(const sf::Event &event)
     default:
         break;
     }
-
-    // if (langChoice == 1) {
-    //     showMainMenu();
-    //     choice = sMM;
-    // }
-    // else {
-    //     hienMenuChinh();
-    //     choice = sMM;
-    // }
-    //}
 }
 
 static void runGameLoop(const sf::Event &event)
@@ -376,6 +318,7 @@ static bool processInput(const sf::Event &event, int preMenu)
                 if (lKey != 1 && tKey != 1 && rKey != 1 && keyPressed->code == sf::Keyboard::Key::Escape) {
                     AudioManager::getInstance().playBackgroundMusic("audio/background_music.wav");
                     statusOfGame = 0;
+                    nameFile.setString("");
                     //currentMenu = preMenu;
                     //sMM = preMenu;
                     currentMenu = 20;
@@ -404,10 +347,9 @@ static void moveCursor(int direction)
     // int screenY = TOP + cursorRow * 2 + 1;
     // GotoXY(screenX, screenY);
 
-    int screenX = startX + (cursorCol + 1) * 22 + 48 * (cursorCol);
-    int screenY = startY + (cursorRow + 1) * 11 + 59 * (cursorRow);
+    int screenX = startX + (cursorCol + 1) * 18 + 42 * (cursorCol);
+    int screenY = startY + (cursorRow + 1) * 6 + 54 * (cursorRow);
 
-    // std::cout << "Con tro: " << screenX << " " << screenY << "\n";
 
     cursor.setString(turn == 1 ? "X" : "O");
     cursor.setFillColor(sf::Color::Black);
@@ -525,53 +467,59 @@ void handleSave(const sf::Event &event)
     // GotoXY(screenX, screenY);
 }
 
-int handleLoadMiniBoard(size_t num) {
+int handleLoadMiniBoard(int num) {
     char p = '0';
+    int flag = 0;
 
-    if (nameOfFile.size() < 1) {
-        std::ifstream nOF(L"name_of_file.txt");
-        if (!nOF.is_open()) return 0;
+    //if (timeFl.size() < 1) {
+    //    //std::ifstream nOF(L"name_of_file.txt");
+    //    //if (!nOF.is_open()) return 0;
 
-        int sizeNameOfFile = 0;
+    //    int sizeNameOfFile = 0;
 
-        nOF >> sizeNameOfFile;
-        for (int i = 0; i < sizeNameOfFile; ++i) {
-            std::string ws;
-            int m = -1;
+    //    nOF >> sizeNameOfFile;
+    //    for (int i = 0; i < sizeNameOfFile; ++i) {
+    //        std::string ws;
+    //        int m = -1;
 
-            nOF >> m >> ws;
-            nameOfFile.push_back(ws);
+    //        nOF >> m >> ws;
+    //        nameOfFile.push_back(ws);
 
-            if (ws == nameOfFile[num]) p = m + '0';
-        }
+    //        if (ws == nameOfFile[num]) p = m + '0';
+    //    }
 
-        nOF.close();
-    }
-    else {
-        for (int i = 0; i < nameOfFile.size(); ++i) {
-            if (nameOfFile[i] == nameOfFile[num]) {
-                p = i + '0';
-                break;
+    //    nOF.close();
+    //}
+    //else {
+    //    for (int i = 0; i < nameOfFile.size(); ++i) {
+    //        if (nameOfFile[i] == nameOfFile[num]) {
+    //            p = i + '0';
+    //            flag = 1;
+    //            break;
+    //        }
+    //    }
+    //}
+
+    //if (flag) {
+        //std::string s{ p };
+
+        std::ifstream f(timeFl[num].ff);
+        if (!f.is_open()) return 0;
+
+        f >> turnMini;
+        f >> remainsMini;
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            for (int j = 0; j < BOARD_SIZE; ++j) {
+                f >> boardMini[i][j].c;
             }
         }
-    }
 
-    std::string s{ p };
+        f.close();
 
-    std::ifstream f(s);
-    if (!f.is_open()) return 0;
+        return 1;
+    //}
 
-    f >> turnMini;
-    f >> remainsMini;
-    for (int i = 0; i < BOARD_SIZE; ++i) {
-        for (int j = 0; j < BOARD_SIZE; ++j) {
-            f >> boardMini[i][j].c;
-        }
-    }
-
-    f.close();
-    
-    return 1;
+    //return 0;
 }
 
 void handleLoad(bool startFromMenu, const sf::Event &event)
@@ -722,7 +670,7 @@ void handleRename(const sf::Event& event)
 
 void handleDelete()
 {
-    deleteGame(delFile);
+    deleteGame(timeFl[selectedFile].ff);
     dKey = 0;
     //colorBackGround = sf::Color::Cyan;
     // int msg_x = LEFT + BOARD_SIZE * 4 + 5;

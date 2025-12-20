@@ -16,7 +16,7 @@
 //using namespace sf;
 
 const int CELLSIZE = 75;
-const int WINDOW_W = 1500;
+const int WINDOW_W = 1280;
 const int WINDOW_H = 800;
 
 extern bool isSoundOn;
@@ -58,7 +58,7 @@ struct Star {
 
 void soundBar(int w);
 void initKeyToggle(sf::Vector2f pos);
-void drawOpaRec(float w, float h, float x, float y, sf::Color color);
+void drawOpaRec(float w, float h, float x, float y, sf::Color color, int outline = 0);
 void declare();
 void startGame();
 void drawWinningLine(float xStart, float yStart, float xEnd, float yEnd);

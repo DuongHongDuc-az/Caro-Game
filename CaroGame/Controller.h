@@ -19,7 +19,7 @@ void handleLoad(bool startFromMenu, const sf::Event &event);
 void handleRename(const sf::Event& event);
 void handleDelete();
 bool isKeyDown(sf::Keyboard::Key key);
-int handleLoadMiniBoard(size_t num);
+int handleLoadMiniBoard(int num);
 void ansContinue(const sf::Event &event);
 
 #endif

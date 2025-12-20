@@ -59,6 +59,7 @@ extern int turn;
 extern int turnMini;
 extern int remains;
 extern int remainsMini;
+extern int numFileDeleted;
 extern Player player1, player2;
 extern std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
 extern _POINT tlB, brB;
@@ -68,10 +69,11 @@ void resetData();
 bool takeTurn(int pX, int pY);
 pair<pii,pii> getWinLine(BOARD &board);
 int getGameState(BOARD &board, _POINT lastMove);
+void saveTimeOfFile(std::string fileName);
 bool saveGame(const std::string &filename);
 bool loadGame(const std::string &filename);
 bool renameGame(const std::string &filenameOld, const std::string &filenameNew);
-bool deleteGame(int numfilename);
+bool deleteGame(const std::string& filename);
 
 _POINT getPointAt(int x, int y);
 
