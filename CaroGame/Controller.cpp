@@ -141,6 +141,7 @@ void run(const sf::Event& event)
         break;
     }
     case 211: {
+        AudioManager::getInstance().stopBackgroundMusic();
         ++statusOfGame;
 
         if (statusOfGame == 1)
@@ -150,12 +151,12 @@ void run(const sf::Event& event)
         else
             statusOfGame = 2;
         handleBotPlay(event);
-        AudioManager::getInstance().stopBackgroundMusic();
-
+        
         break;
     }
     case 22:
     {
+        AudioManager::getInstance().stopBackgroundMusic();
         if (loadFromMenu == 1) {
             if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
                 if (keyPressed->code == sf::Keyboard::Key::L) {
@@ -174,7 +175,7 @@ void run(const sf::Event& event)
             statusOfGame = 2;
 
         runGameLoop(event);
-        AudioManager::getInstance().stopBackgroundMusic();
+        
         break;
     }
     case 3:

@@ -55,23 +55,6 @@ void resetData() {
         }
     }
 
-    std::ifstream nOF(L"name_of_file.txt");
-
-    int sizeNameOfFile = 0;
-
-    nOF >> sizeNameOfFile;
-    nameOfFile.resize(sizeNameOfFile);
-
-    for (int i = 0; i < sizeNameOfFile; ++i) {
-        std::string ws;
-        int m = -1;
-
-        nOF >> m >> ws;
-        nameOfFile[i] = ws;
-    }
-
-    nOF.close();
-
     std::ifstream f(L"timeFile.txt");
 
     int sizeTimeFile = 0;
@@ -81,11 +64,11 @@ void resetData() {
     timeFl.resize(sizeTimeFile);
 
     for (size_t i = 0; i < sizeTimeFile; ++i) {
-        std::string num, d, t;
+        std::string s, d, t;
         int m = -1;
 
-        f >> num >> d >> t;
-        timeFl[i] = { num, {d, t} };
+        f >> s >> d >> t;
+        timeFl[i] = { s, {d, t} };
     }
 
     f.close();
@@ -264,6 +247,8 @@ static bool changeData(const std::string& filenameOld, const std::string& filena
     fold.close();
     remove(filenameOld.c_str());
     fnew.close();
+
+    return true;
 }
 
 bool renameGame(const std::string& filenameOld, const std::string& filenameNew) {
