@@ -271,14 +271,14 @@ void startGame() {
             updateCellAtScreen(1, 1, 1, 1);
 
             if (lKey == 1 && tKey != 1) {
-                drawOpaRec(1250, OPAREC_H, WINDOW_W / 2 - 25, WINDOW_H - OPAREC_H - 100, sf::Color(34, 37, 93));
-                //sf::Texture texLoadInBoard("image/backgroundLoadInBoard.png");
-                //sf::Sprite spriteTexLoadInBoard(texLoadInBoard);
+                //drawOpaRec(1250, OPAREC_H, WINDOW_W / 2 - 25, WINDOW_H - OPAREC_H - 100, sf::Color(34, 37, 93));
+                sf::Texture texLoadInBoard("image/backgroundLoadInBoard.png");
+                sf::Sprite spriteTexLoadInBoard(texLoadInBoard);
 
-                //spriteTexLoadInBoard.setOrigin(sf::Vector2f({ 1250 / 2, 0 }));
-                //spriteTexLoadInBoard.setPosition(sf::Vector2f({ WINDOW_W / 2, WINDOW_H - OPAREC_H - 100 }));
+                spriteTexLoadInBoard.setOrigin(sf::Vector2f({ 1250 / 2, 0 }));
+                spriteTexLoadInBoard.setPosition(sf::Vector2f({ WINDOW_W / 2, WINDOW_H - OPAREC_H - 100 }));
 
-                //window.draw(spriteTexLoadInBoard);
+                window.draw(spriteTexLoadInBoard);
 
                 displayListOfFile();
                 showButtonLoad(22);
