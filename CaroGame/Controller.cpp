@@ -286,7 +286,6 @@ static bool processInput(const sf::Event &event, int preMenu)
 {
     if (currentMenu == 22)
     {
-        //std::cout << lKey << " " << tKey << "\n";
         if (isKeyDown(Key::Up) && lKey == 0 && tKey == 0)
             moveCursor(0);
         if (isKeyDown(Key::Down) && lKey == 0 && tKey == 0)
@@ -294,15 +293,6 @@ static bool processInput(const sf::Event &event, int preMenu)
         if (isKeyDown(Key::Left) && lKey == 0 && tKey == 0)
             moveCursor(2);
         if (isKeyDown(Key::Right) && lKey == 0 && tKey == 0)
-            moveCursor(3);
-
-        if (isKeyDown(Key::W) && lKey == 0 && tKey == 0)
-            moveCursor(0);
-        if (isKeyDown(Key::S) && lKey == 0 && tKey == 0)
-            moveCursor(1);
-        if (isKeyDown(Key::A) && lKey == 0 && tKey == 0)
-            moveCursor(2);
-        if (isKeyDown(Key::D) && lKey == 0 && tKey == 0)
             moveCursor(3);
 
         if (isKeyDown(Key::Enter) && lKey == 0 && tKey == 0)
@@ -327,6 +317,15 @@ static bool processInput(const sf::Event &event, int preMenu)
                     sMM = 20;
                     return true;
                 }
+
+                if (keyPressed->code == sf::Keyboard::Key::W && lKey == 0 && tKey == 0)
+                    moveCursor(0);
+                if (keyPressed->code == sf::Keyboard::Key::S && lKey == 0 && tKey == 0)
+                    moveCursor(1);
+                if (keyPressed->code == sf::Keyboard::Key::A && lKey == 0 && tKey == 0)
+                    moveCursor(2);
+                if (keyPressed->code == sf::Keyboard::Key::D && lKey == 0 && tKey == 0)
+                    moveCursor(3);
         }
         //}
     }
