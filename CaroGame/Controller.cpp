@@ -110,6 +110,7 @@ void run(const sf::Event& event)
 
     switch (choice) {
     case 1: {
+        res = -1;
         if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
             if (keyPressed->code == sf::Keyboard::Key::Enter) currentMenu = 20;
             if (keyPressed->code == sf::Keyboard::Key::Escape) currentMenu = 1;
