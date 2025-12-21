@@ -136,7 +136,9 @@ void run(const sf::Event& event)
         }
 
 
-        if (0 < diffChoice && diffChoice < 4) DIFF = diffChoice;
+        if (0 < diffChoice && diffChoice < 4) {
+            DIFF = diffChoice;
+        }
         else break;
         break;
     }

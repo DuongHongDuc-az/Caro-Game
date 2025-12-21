@@ -279,8 +279,7 @@ void updateCellAtScreen(int screenX, int screenY, int player, int b)
                 currentPiece.setCharacterSize(35);
                 currentPiece.setFillColor(piece == 1 ? sf::Color(210, 4, 45) : sf::Color(0, 128, 0));
             }
-            else {
-                //int posX = 
+            else { 
                 posX = WINDOW_W / 2 + 100 + (c + 1) * 15 + 35 * (c);
                
                 if (currentMenu == 3) posY = WINDOW_H / 2 - 208 + (r + 1) * 5 + 45 * (r);
@@ -942,8 +941,8 @@ void showModeMenu(int type)
 
     if (currentMenu == 21)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS) {
-            diffChoice = selectedItem + 1;
+        if (isKeyDown(Key::Enter) && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS) {
+            diffChoice = selectedDiff + 1;
             keyPressTimer.restart();
         }
 
