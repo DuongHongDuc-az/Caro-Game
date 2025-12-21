@@ -409,13 +409,17 @@ void displayListOfFile() {
         float col2_X = col1_X + 200;
         float col3_X = col2_X + 200;
 
+        endShowFile = startShowFile + numFileShow;
+
         if (endShowFile > timeFl.size()) endShowFile = timeFl.size();
+
+        //std::cout << endShowFile << "\n";
 
         for (int i = startShowFile; i < endShowFile; ++i) {
             //if (nameOfFile[i] != "NULL") {
                 float posY;
 
-                if (endShowFile <= numFileShow) {
+                if (endShowFile < numFileShow) {
                     if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(i + 2);
                     else posY = OPAREC_Y - 100 + 65 * (float)(i + 2);
                 }
@@ -510,7 +514,7 @@ void displayListOfFile() {
     if (currentMenu == 3) {
         if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::L)) {
             loadFromMenu = 1;
-            loadGame(nameOfFile[selectedFile]);
+            loadGame(timeFl[selectedFile].ff);
         }
         else if (dKey != 1 && rKey != 1 && lKey != 1 && isKeyDown(Key::R)) {
             rKey = 1;
@@ -529,7 +533,7 @@ void displayListOfFile() {
 
     if (currentMenu == 22) {
         if (dKey != 1 && rKey != 1 && lKey == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && keyPressTimer.getElapsedTime().asSeconds() > KEY_DELAY_SECONDS) {
-            loadGame(nameOfFile[selectedFile]);
+            loadGame(timeFl[selectedFile].ff);
             lKey = -1;
             keyPressTimer.restart();
         }
@@ -1018,6 +1022,7 @@ void askContinue()
         sMM = 1;
         currentMenu = 1;
         continueText.setString("");
+        AudioManager::getInstance().playBackgroundMusic("audio/background_music.wav");
         resetData();
     }
 }
