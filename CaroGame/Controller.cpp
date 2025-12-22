@@ -25,7 +25,6 @@ static void moveCursor(int direction);
 static bool processInput(const sf::Event &event, int preMenu);
 static void handleTurn();
 static void endGame(const sf::Event& event, int result, int player, int playWBot = 0);
-static void redrawGameScreen();
 static void runGameLoop(const sf::Event &event);
 static void updateKeyToggle();
 
@@ -104,7 +103,6 @@ static void handleSettings(const sf::Event& event)
         break;
     }
 }
-extern void randomizeSideImage();
 
 void run(const sf::Event& event)
 {
@@ -185,7 +183,6 @@ void run(const sf::Event& event)
     case 3:
     {
         currentMenu = 4;
-        // showAbout();
         break;
     }
     case 32:
@@ -213,7 +210,6 @@ void run(const sf::Event& event)
 static void runGameLoop(const sf::Event &event)
 {
     bool exitRequested = false;
-    redrawGameScreen();
 
     processInput(event, 20);
     int result = 2;
@@ -248,7 +244,7 @@ static bool processInput(const sf::Event &event, int preMenu)
 
         if (isKeyDown(Key::L) && tKey == 0) lKey = 1;
         
-        if (isKeyDown(Key::T) && lKey == 0)
+        if (isKeyDown(Key::T) && lKey == 0 && timeFl.size() < 20)
             tKey = 1;
  
             if (const auto* keyPressed = event.getIf<sf::Event::KeyReleased>()) {
@@ -258,6 +254,7 @@ static bool processInput(const sf::Event &event, int preMenu)
                     nameFile.setString("");
                     currentMenu = 20;
                     sMM = 20;
+                    diffChoice = 0;
                     return true;
                 }
 
@@ -310,12 +307,10 @@ static void handleTurn()
         upBound(cursorRow, cursorCol);
         AudioManager::getInstance().playSound(SoundEffect::Move);
         int previous_turn = (turn == 1) ? -1 : 1;
-        updateCellAtBoardIndex(cursorCol, cursorRow, previous_turn);
         okToCheck = 1;
         showPlayerInfo();
         int screenX = LEFT + cursorCol * 4 + 2;
         int screenY = TOP + cursorRow * 2 + 1;
-        GotoXY(screenX, screenY);
     }
 }
 
@@ -328,9 +323,11 @@ void handleSave(const sf::Event &event)
 int handleLoadMiniBoard(int num) {
     char p = '0';
     int flag = 0;
+    int tmp;
         std::ifstream f(timeFl[num].ff);
         if (!f.is_open()) return 0;
 
+        f >> tmp;
         f >> turnMini;
         f >> remainsMini;
         for (int i = 0; i < BOARD_SIZE; ++i) {
@@ -376,36 +373,6 @@ static void endGame(const sf::Event& event, int result, int player, int playWBot
     bot = playWBot;
 }
 
-static void redrawGameScreen()
-{
-    for (int r = 0; r < BOARD_SIZE; ++r)
-    {
-        for (int c = 0; c < BOARD_SIZE; ++c)
-        {
-            if (board[r][c].c != 0)
-            {
-                updateCellAtBoardIndex(c, r, board[r][c].c);
-            }
-        }
-    }
-    int screenX = LEFT + cursorCol * 4 + 2;
-    int screenY = TOP + cursorRow * 2 + 1;
-}
-
-static inline void makeMove(int x, int y)
-{
-    AudioManager::getInstance().playSound(SoundEffect::Move);
-    board[x][y].c = turn;
-    turn = -turn;
-    cursorRow = x;
-    cursorCol = y;
-    --remains;
-    upBound(cursorRow, cursorCol);
-    player2.moves++;
-    updateCellAtBoardIndex(cursorCol, cursorRow, -turn);
-    showPlayerInfo();
-}
-
 void handleBotPlay(const sf::Event& event)
 {
     bool exitRequested = false;
@@ -426,13 +393,11 @@ void handleBotPlay(const sf::Event& event)
         {
             int tmpX = cursorRow, tmpY = cursorCol;
             pii botMove = getBestMove(board);
-            makeMove(botMove.ff, botMove.ss);
             result = getGameState(board, _POINT{cursorRow, cursorCol, -turn});
             cursorRow = tmpX;
             cursorCol = tmpY;
             int screenX = LEFT + cursorCol * 4 + 2;
             int screenY = TOP + cursorRow * 2 + 1;
-            GotoXY(screenX, screenY);
         }
         if (result != 2)
         {

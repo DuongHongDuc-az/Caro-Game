@@ -7,7 +7,7 @@ bool isMoving = false;
 float trackW = 80.f, trackH = 30;
 float thumbW = 30, thumbH = 30;
 float thumbSpeed = trackW - thumbW;
-int currentMenu = 0;
+int currentMenu = 1;
 const sf::Font font("Boheiman.ttf");
 const float OPAREC_W = 1200;
 const float OPAREC_H = 600;
@@ -105,29 +105,6 @@ void drawOpaRec(float w, float h, float x, float y, sf::Color color, int outline
     window.draw(opaRec);
 }
 
-static int processBar() {
-    if (grayBar.getSize().x == 0) {
-        grayBar.setSize(sf::Vector2f({ BAR_WIDTH, BAR_HEIGHT }));
-        grayBar.setPosition(sf::Vector2f({ (WINDOW_W - BAR_WIDTH) / 2, 450 - BAR_HEIGHT }));
-        grayBar.setFillColor(sf::Color(128, 128, 128));
-
-        colorBar.setFillColor(sf::Color::Cyan);
-        colorBar.setPosition(grayBar.getPosition());
-    }
-
-    if (currentWidthBar < BAR_WIDTH) {
-        currentWidthBar += SPEED;
-    }
-    else {
-        ++currentWidthBar;
-    }
-
-    colorBar.setSize(currentWidthBar < BAR_WIDTH ? sf::Vector2f({ currentWidthBar, BAR_HEIGHT }) : sf::Vector2f({ BAR_WIDTH, BAR_HEIGHT }));
-
-    if (currentWidthBar >= BAR_WIDTH + 250) return 1;
-    return 0;
-}
-
 std::vector<sf::RectangleShape> createThickGrid(int w, int h, int cellSize, sf::Color color, float thickness, float offsetX, float offsetY) {
     std::vector<sf::RectangleShape> lines;
     sf::Color gridColor = color;
@@ -170,9 +147,6 @@ void declare() {
 }
 
 void startGame() {
-    //currentMenu = 3;
-    //lKey = 1;
-
     const sf::Color colorGrid(128, 128, 128, 100);
     sf::Font fontTitle("Pixelic.ttf");
     sf::Text title(fontTitle, L"CARO GAME", 150);
@@ -220,7 +194,6 @@ void startGame() {
             }
         }
 
-        //window.clear(colorBackGround);
         window.clear();
 
         sf::Sprite backgroundSprite(texMain);
@@ -257,7 +230,6 @@ void startGame() {
         if (currentMenu == 1) showMainMenu();
         if (currentMenu == 20) {
             showPlayerMenu();
-            //sMM = 20;
         }
         if (currentMenu == 21) showModeMenu(1);
         if (currentMenu == 22) {
@@ -272,7 +244,6 @@ void startGame() {
             updateCellAtScreen(1, 1, 1, 1);
 
             if (lKey == 1 && tKey != 1) {
-                //drawOpaRec(1250, OPAREC_H, WINDOW_W / 2 - 25, WINDOW_H - OPAREC_H - 100, sf::Color(34, 37, 93));
                 sf::Texture texLoadInBoard("image/backgroundLoadInBoard.png");
                 sf::Sprite spriteTexLoadInBoard(texLoadInBoard);
 
@@ -346,13 +317,6 @@ void startGame() {
         }
         if (currentMenu == 5) {
             showSettingsMenu();
-        }
-        if (currentMenu == 0) {
-            currentMenu = processBar();
-
-            window.draw(title);
-            window.draw(grayBar);
-            window.draw(colorBar);
         }
         if (currentMenu == -1) window.close();
         window.display();

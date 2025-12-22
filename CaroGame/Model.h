@@ -61,7 +61,7 @@ extern int remains;
 extern int remainsMini;
 extern int numFileDeleted;
 extern Player player1, player2;
-extern std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
+extern std::vector<std::pair<std::string, std::pair<std::pair<std::string, std::string>, int>>> timeFl;
 extern _POINT tlB, brB;
 extern std::vector<std::string> nameOfFile;
 

@@ -22,7 +22,7 @@ int remainsMini;
 int numFileDeleted = 0;
 Player player1;
 Player player2;
-std::vector<std::pair<std::string, std::pair<std::string, std::string>>> timeFl;
+std::vector<std::pair<std::string, std::pair<std::pair<std::string, std::string>, int>>> timeFl;
 std::vector<std::string> nameOfFile;
 _POINT tlB(9,9), brB(0,0);
 
@@ -66,9 +66,10 @@ void resetData() {
     for (size_t i = 0; i < sizeTimeFile; ++i) {
         std::string s, d, t;
         int m = -1;
+        int bt = -1;
 
-        f >> s >> d >> t;
-        timeFl[i] = { s, {d, t} };
+        f >> s >> d >> t >> bt;
+        timeFl[i] = { s, {{d, t}, bt} };
     }
 
     f.close();
@@ -161,15 +162,18 @@ void saveTimeOfFile(std::string fileName) {
     std::ofstream f("timeFile.txt");
 
     for (int i = 0; i < timeFl.size(); ++i) {
-        if (timeFl[i].first == fileName) {
+        if (timeFl[i].ff == fileName) {
             timeFl.erase(timeFl.begin() + i);
             break;
         }
     }
-    timeFl.push_back({ fileName, {dateShow, timeShow } });
+
+    timeFl.push_back({ fileName, {{dateShow, timeShow }, diffChoice} });
 
     f << timeFl.size() << "\n";
-    for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].first << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
+    for (int i = 0; i < timeFl.size(); ++i) {
+        f << timeFl[i].ff << " " << timeFl[i].ss.ff.ff << " " << timeFl[i].ss.ff.ss << " " << timeFl[i].ss.ss << "\n";
+    }
 
     f.close();
 }
@@ -178,6 +182,7 @@ bool saveGame(const std::string& filename) {
     std::ofstream f(filename);
     if (!f.is_open()) return false;
     saveTimeOfFile(filename);
+    f << diffChoice << "\n";
     f << turn << "\n" << remains << "\n";
     for (int i = 0; i < BOARD_SIZE; ++i) {
         for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -194,6 +199,7 @@ bool saveGame(const std::string& filename) {
 bool loadGame(const std::string& filename) {
     std::ifstream f(filename);
     if (!f.is_open()) return false;
+    f >> diffChoice;
     f >> turn;
     f >> remains;
     for (int i = 0; i < BOARD_SIZE; ++i) {
@@ -217,10 +223,11 @@ static bool changeData(const std::string& filenameOld, const std::string& filena
 
     if (!fold.is_open()) return false;
 
-    int turnFileOld, remainsFileOld, moves, wins;
+    int botFileOld, turnFileOld, remainsFileOld, moves, wins;
     int a[BOARD_SIZE][BOARD_SIZE];
 
     if (!fold.is_open()) return false;
+    fold >> botFileOld; fnew << botFileOld << "\n";
     fold >> turnFileOld; fnew << turnFileOld << "\n";
     fold >> remainsFileOld; fnew << remainsFileOld << "\n";
     for (int i = 0; i < BOARD_SIZE; ++i) {
@@ -271,7 +278,7 @@ bool renameGame(const std::string& filenameOld, const std::string& filenameNew) 
     }
 
     f << timeFl.size() << "\n";
-    for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].first << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
+    for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].ff << " " << timeFl[i].ss.ff.ff << " " << timeFl[i].ss.ff.ss << " " << timeFl[i].ss.ss << "\n";
 
     f.close();
 
@@ -294,7 +301,7 @@ bool deleteGame(const std::string& filename) {
     if (tmpSize == timeFl.size()) return false;
 
     f << timeFl.size() << "\n";
-    for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].first << " " << timeFl[i].second.first << " " << timeFl[i].second.second << "\n";
+    for (int i = 0; i < timeFl.size(); ++i) f << timeFl[i].ff << " " << timeFl[i].ss.ff.ff << " " << timeFl[i].ss.ff.ss << " " << timeFl[i].ss.ss << "\n";
 
     f.close();
 

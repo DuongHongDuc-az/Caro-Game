@@ -34,7 +34,6 @@ static int selectedDiff = 0;
 static int selectedMode = 0;
 static int selectedButton = -1;
 static sf::Clock keyPressTimer;
-//static sf::String inputString;
 static std::string inputString;
 static const float KEY_DELAY_SECONDS = 0.2f;
 
@@ -128,49 +127,6 @@ int showMenuSettings()
     return choice;
 }
 
-void fixConsoleWindow()
-{
-    HWND consoleWindow = GetConsoleWindow();
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_FONT_INFOEX fontInfo;
-    fontInfo.cbSize = sizeof(CONSOLE_FONT_INFOEX);
-    GetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
-    wcscpy_s(fontInfo.FaceName, L"Consolas");
-    fontInfo.dwFontSize.X = 0;
-    fontInfo.dwFontSize.Y = 16;
-    SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
-    COORD bufferSize = { 120, 65 };
-    SetConsoleScreenBufferSize(hConsole, bufferSize);
-    SMALL_RECT windowSize = { 0, 0, 119, 60 };
-    SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
-    LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
-    style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
-    SetWindowLong(consoleWindow, GWL_STYLE, style);
-    HMENU hmenu = GetSystemMenu(consoleWindow, FALSE);
-    EnableMenuItem(hmenu, SC_CLOSE, MF_ENABLED);
-    RECT rectClient, rectWindow;
-    GetClientRect(consoleWindow, &rectClient);
-    GetWindowRect(consoleWindow, &rectWindow);
-    int width = 1200;
-    int height = 700;
-    int posX = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-    int posY = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-    MoveWindow(consoleWindow, posX, posY, width, height, TRUE);
-}
-
-void GotoXY(int x, int y)
-{
-    COORD coord;
-    coord.X = x;
-    coord.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
-
-void setColor(int color)
-{
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-}
-
 void updateCellAtScreen(int screenX, int screenY, int player, int b)
 {
     for (int r = 0; r < BOARD_SIZE; ++r)
@@ -214,12 +170,6 @@ void updateCellAtScreen(int screenX, int screenY, int player, int b)
     }
 }
 
-void updateCellAtBoardIndex(int col, int row, int player)
-{
-    int screenX = startX + col * 22 + 48 * (col - 1);
-    int screenY = startY + row * 11 + 59 * (row - 1);
-}
-
 void drawBoard()
 {
     std::vector<sf::RectangleShape> drawBoard = createThickGrid(cs, cs, cs / BOARD_SIZE, sf::Color(35, 71, 139), 5, startX, startY);
@@ -233,6 +183,7 @@ void handleShowListOfFile()
 {
     std::string fileName;
     std::string timeSaved, dateSaved;
+    int botSaved;
 
     std::ifstream f("timeFile.txt");
 
@@ -246,11 +197,12 @@ void handleShowListOfFile()
 
     for (int i = 0; i < timeFl.size(); ++i) {
 
-        f >> fileName >> dateSaved >> timeSaved;
+        f >> fileName >> dateSaved >> timeSaved >> botSaved;
 
-        timeFl[i].first = fileName;
-        timeFl[i].second.first = dateSaved;
-        timeFl[i].second.second = timeSaved;
+        timeFl[i].ff = fileName;
+        timeFl[i].ss.ff.ff = dateSaved;
+        timeFl[i].ss.ff.ss = timeSaved;
+        timeFl[i].ss.ss = botSaved;
     }
     f.close();
 }
@@ -263,6 +215,7 @@ void displayListOfFile() {
         float col1_X = WINDOW_W - OPAREC_X - OPAREC_W / 2 + 25;
         float col2_X = col1_X + 200;
         float col3_X = col2_X + 200;
+        float col4_X = col3_X + 150;
 
         endShowFile = startShowFile + numFileShow;
 
@@ -270,49 +223,52 @@ void displayListOfFile() {
 
 
         for (int i = startShowFile; i < endShowFile; ++i) {
-                float posY;
+            float posY;
 
-                if (endShowFile < numFileShow) {
-                    if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(i + 2);
-                    else posY = OPAREC_Y - 100 + 65 * (float)(i + 2);
+            if (endShowFile < numFileShow) {
+                if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(i + 2);
+                else posY = OPAREC_Y - 100 + 65 * (float)(i + 2);
+            }
+            else {
+                float tmp = i - ((endShowFile - 1) - (numFileShow - 1));
+                if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(tmp + 2);
+                else posY = OPAREC_Y - 100 + 65 * (float)(tmp + 2);
+            }
+
+            if (selectedFile == i) {
+                if (handleLoadMiniBoard(i)) {
+                    updateCellAtScreen(1, 1, 1, 0);
                 }
                 else {
-                    float tmp = i - ((endShowFile - 1) - (numFileShow - 1));
-                    if (currentMenu == 3) posY = OPAREC_Y - 50 + 65 * (float)(tmp + 2);
-                    else posY = OPAREC_Y - 100 + 65 * (float)(tmp + 2);
+                    sf::Text text(font, langChoice == 1 ? L"Cann't load file!" : L"Không thể tải file!", 30);
+
+                    text.setFillColor(sf::Color::Red);
+
+                    window.draw(text);
                 }
+            }
+            else {
+                fileText.setFillColor(sf::Color::White);
+            }
 
-                if (selectedFile == i) {
-                    if (handleLoadMiniBoard(i)) {
-                        updateCellAtScreen(1, 1, 1, 0);
-                    }
-                    else {
-                        sf::Text text(font, langChoice == 1 ? L"Cann't load file!" : L"Không thể tải file!", 30);
+            sf::Color textColor = (selectedFile == (int)i) ? sf::Color::Yellow : sf::Color::White;
+            fileText.setFillColor(textColor);
 
-                        text.setFillColor(sf::Color::Red);
+            fileText.setString(timeFl[i].ff);
+            fileText.setPosition({ col1_X, posY });
+            window.draw(fileText);
 
-                        window.draw(text);
-                    }
-                }
-                else {
-                    fileText.setFillColor(sf::Color::White);
-                }
+            fileText.setString(timeFl[i].ss.ff.ff);
+            fileText.setPosition({ col2_X, posY });
+            window.draw(fileText);
 
-                sf::Color textColor = (selectedFile == (int)i) ? sf::Color::Yellow : sf::Color::White;
-                fileText.setFillColor(textColor);
+            fileText.setString(timeFl[i].ss.ff.ss);
+            fileText.setPosition({ col3_X, posY });
+            window.draw(fileText);
 
-                fileText.setString(timeFl[i].ff);
-                fileText.setPosition({ col1_X, posY });
-                window.draw(fileText);
-
-                fileText.setString(timeFl[i].ss.ff);
-                fileText.setPosition({ col2_X, posY });
-                window.draw(fileText);
-
-                fileText.setString(timeFl[i].ss.ss);
-                fileText.setPosition({ col3_X, posY });
-                window.draw(fileText);
-            //}
+            fileText.setString(timeFl[i].ss.ss == 0 ? L"" : L"BOT");
+            fileText.setPosition({ col4_X, posY });
+            window.draw(fileText);
 
             int itemChanged = 0;
 
@@ -422,7 +378,7 @@ void showPlayerInfo()
         };
 
         button = {
-            L"T: Save Game",
+            timeFl.size() < 20 ? L"T: Save Game" : L"Max 20 files",
             L"L: Load Game",
             L"Esc: Back"
         };
@@ -438,7 +394,7 @@ void showPlayerInfo()
         };
 
         button = {
-            L"T: Lưu Game",
+            timeFl.size() < 20 ? L"T: Lưu Game" : L"Tối đa 20 file",
             L"L: Tải Game",
             L"Esc: Quay lại"
         };
@@ -446,7 +402,7 @@ void showPlayerInfo()
 
     sf::FloatRect bounds = nameFile.getLocalBounds();
 
-    nameFile.setPosition(sf::Vector2f({ (float)WINDOW_W - bounds.getCenter().x * 2 , (float)WINDOW_H - nameFile.getCharacterSize() - 25 }));
+    nameFile.setPosition(sf::Vector2f({ (float)WINDOW_W - bounds.getCenter().x * 2 - 25, (float)WINDOW_H - nameFile.getCharacterSize() - 25 }));
     nameFile.setFillColor(sf::Color::Black);
 
 
@@ -467,27 +423,14 @@ void showPlayerInfo()
 
         buttonText.setFillColor(sf::Color::Black);
 
+        if (timeFl.size() >= 4 && i == 0) buttonText.setFillColor(sf::Color::Red);
+
         sf::FloatRect bounds = buttonText.getLocalBounds();
         buttonText.setOrigin(bounds.getCenter());
 
         buttonText.setPosition(sf::Vector2f({ (float)((WINDOW_W / 2 - cs / 2) + 780), (float)WINDOW_H / 2 - cs / 2 + 85 * (i + 1) }));
         window.draw(buttonText);
     }
-}
-
-void displayMessage(const std::string& message, int x, int y)
-{
-    setColor(240);
-    GotoXY(x, y);
-    cout << message;
-}
-
-void clearMessage(int x, int y, int length)
-{
-    setColor(240);
-    GotoXY(x, y);
-    for (int i = 0; i < length; ++i)
-        std::cout << " ";
 }
 
 void showWinEffect(int result, int player)
@@ -611,10 +554,10 @@ void showModeMenu(int type)
 {
     vector<wstring> menuItems;
     if (langChoice == 1) {
-        menuItems = !type ? vector<wstring>{L"2 PLAYERS", L"PLAY WITH BOT", L"BACK"} : vector<wstring>{ L"EASY", L"MEDIUM", L"HARD" };
+        menuItems = !type ? vector<wstring>{L"2 PLAYERS", L"PLAY WITH BOT", L"BACK"} : vector<wstring>{ L"EASY", L"MEDIUM", L"HARD", L"ESC: BACK"};
     }
     else {
-        menuItems = !type ? vector<wstring>{L"2 NGƯỜI CHƠI", L"CHƠI VỚI MÁY", L"QUAY LẠI"} : vector<wstring>{ L"DỄ", L"TRUNG BÌNH", L"KHÓ" };
+        menuItems = !type ? vector<wstring>{L"2 NGƯỜI CHƠI", L"CHƠI VỚI MÁY", L"QUAY LẠI"} : vector<wstring>{ L"DỄ", L"TRUNG BÌNH", L"KHÓ", L"ESC: QUAY LẠI"};
     }
     int totalItems = menuItems.size();
     const unsigned int textSize = 50;
@@ -725,15 +668,6 @@ void askContinue()
     }
 }
 
-string getFileNameFromUser(const string& prompt, int x, int y)
-{
-    string filename;
-    displayMessage(prompt, x, y);
-    cin >> filename;
-    clearMessage(x, y, (int)prompt.length() + 30);
-    return filename;
-}
-
 void showAbout()
 {
 
@@ -807,14 +741,16 @@ void showPlayerMenu()
     {
         playerChoice = {
             L"1 player",
-            L"2 player"
+            L"2 player",
+            L"ESC: Back"
         };
     }
     else
     {
         playerChoice = {
             L"1 người chơi",
-            L"2 người chơi"
+            L"2 người chơi",
+            L"ESC: Quay lại"
         };
     }
 
@@ -888,319 +824,6 @@ void showPlayerMenu()
         selectedMode = 0;
 }
 
-void setConsoleFont()
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_FONT_INFOEX fontInfo;
-    fontInfo.cbSize = sizeof(CONSOLE_FONT_INFOEX);
-    GetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
-    fontInfo.FontFamily = FF_DONTCARE;
-    fontInfo.FontWeight = FW_NORMAL;
-    wcscpy_s(fontInfo.FaceName, L"Consolas");
-    SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
-}
-
-void waitForMouseClick()
-{
-    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
-    DWORD mode;
-    GetConsoleMode(hStdin, &mode);
-    SetConsoleMode(hStdin, (mode & ~ENABLE_QUICK_EDIT_MODE) | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS);
-    FlushConsoleInputBuffer(hStdin);
-    INPUT_RECORD irInBuf[128];
-    DWORD cNumRead;
-    while (true)
-    {
-        if (!ReadConsoleInput(hStdin, irInBuf, 128, &cNumRead))
-            continue;
-        for (DWORD i = 0; i < cNumRead; i++)
-        {
-            if (irInBuf[i].EventType == MOUSE_EVENT)
-            {
-                if (irInBuf[i].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-                {
-                    SetConsoleMode(hStdin, mode);
-                    return;
-                }
-            }
-            if (irInBuf[i].EventType == KEY_EVENT)
-            {
-                if (irInBuf[i].Event.KeyEvent.bKeyDown)
-                {
-                    SetConsoleMode(hStdin, mode);
-                    return;
-                }
-            }
-        }
-    }
-}
-
-void printCentered(string text, int y, int color)
-{
-    int consoleWidth = 150;
-    int textLength = text.length();
-    int x = (consoleWidth - textLength) / 2;
-    if (x < 0)
-        x = 0;
-
-    GotoXY(x, y);
-    setColor(color);
-    cout << text;
-}
-
-void showSplashScreen()
-{
-    system("cls");
-    setColor(240);
-    string pixelLogo = R"(
- ██████╗ █████╗ ██████╗  ██████╗      ██████╗  █████╗ ███╗   ███╗███████╗
-██╔════╝██╔══██╗██╔══██╗██╔═══██╗    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝
-██║     ███████║██████╔╝██║   ██║    ██║  ███╗███████║██╔████╔██║█████╗  
-██║     ██╔══██║██╔══██╗██║   ██║    ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  
-╚██████╗██║  ██║██║  ██║╚██████╔╝    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
- ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
-  )";
-    stringstream ss(pixelLogo);
-    string line;
-    int logoX = 5;
-    int y = 5;
-    while (getline(ss, line))
-    {
-        if (line.length() > 0 && line.find_first_not_of(" \t\r\n") != string::npos)
-        {
-            GotoXY(logoX, y++);
-            setColor(240 + 9);
-            cout << line;
-        }
-    }
-    int promptY = 15;
-    string msg1 = "Press any key to enter the game";
-    GotoXY(28, promptY);
-    setColor(240 + 12);
-    cout << msg1;
-    string myIntroArt = R"(
-   ██░▀██████████████▀░██
-　 █▌▒▒░████████████░▒▒▐█
-　 █░▒▒▒░██████████░▒▒▒░█
-　　▌░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▐
-　　░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░
-　 ███▀▀▀██▄▒▒▒▒▒▒▒▄██▀▀▀██
-　 ██░░░▐█░▀█▒▒▒▒▒█▀░█▌░░░█
-　 ▐▌░░░▐▄▌░▐▌▒▒▒▐▌░▐▄▌░░▐▌
-　　█░░░▐█▌░░▌▒▒▒▐░░▐█▌░░█
-　　▒▀▄▄▄█▄▄▄▌░▄░▐▄▄▄█▄▄▀▒
-　　░░░░░░░░░░└┴┘░░░░░░░░░
-　　██▄▄░░░░░░░░░░░░░░▄▄██
-　　████████▒▒▒▒▒▒████████
-　　█▀░░███▒▒░░▒░░▒▀██████
-　　█▒░███▒▒╖░░╥░░╓▒▐█████
-　　█▒░▀▀▀░░║░░║░░║░░█████
-　　██▄▄▄▄▀▀┴┴╚╧╧╝╧╧╝┴┴███
-　　██████████████████████
-    )";
-
-    stringstream ssArt(myIntroArt);
-    string lineArt;
-    int x = 80;
-    int artY = 5;
-
-    setColor(240 + 5);
-
-    while (getline(ssArt, lineArt))
-    {
-        if (lineArt.length() == 0 && artY == 5)
-            continue;
-        GotoXY(x, artY++);
-        cout << lineArt;
-    }
-
-    waitForMouseClick();
-    system("cls");
-    setColor(240);
-}
-void drawMenu(int x, int y, int width, int height)
-{
-    setColor(240 + 8);
-    for (int i = 0; i < height; i++)
-    {
-        GotoXY(x, y + i);
-        for (int j = 0; j < width; j++)
-        {
-            if (i == 0 && j == 0)
-                cout << "\xE2\x95\x94";
-            else if (i == 0 && j == width - 1)
-                cout << "\xE2\x95\x97";
-            else if (i == height - 1 && j == 0)
-                cout << "\xE2\x95\x9A";
-            else if (i == height - 1 && j == width - 1)
-                cout << "\xE2\x95\x9D";
-            else if (i == 0 || i == height - 1)
-                cout << "\xE2\x95\x90";
-            else if (j == 0 || j == width - 1)
-                cout << "\xE2\x95\x91";
-            else
-                cout << " ";
-        }
-    }
-    setColor(240);
-}
-static int currentArtIndex = 0;
-void randomizeSideImage()
-{
-    srand(time(0));
-    currentArtIndex = rand() % 5;
-}
-void drawRightSideImage()
-{
-    int x = 77;
-    int y = 2;
-    vector<string> artCollection;
-    string art1 = R"(
-             ¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
-      ¶¶¶¶¶¶¶¶¶           ¶¶¶¶¶¶¶¶¶
-    ¶¶¶¶¶          ¶¶¶¶¶          ¶¶¶¶¶
-    ¶¶           ¶¶¶¶¶¶¶¶¶            ¶¶
-    ¶¶          ¶¶¶¶¶¶¶¶¶¶¶           ¶¶
-    ¶¶              ¶¶¶¶¶¶            ¶¶
-    ¶¶             ¶¶¶¶¶¶¶            ¶¶
-    ¶¶      ¶¶   ¶¶¶¶¶¶¶¶¶            ¶¶
-    ¶¶     ¶¶¶¶¶¶¶¶¶¶¶¶¶¶     ¶ ¶     ¶¶
-    ¶¶     ¶¶¶¶¶¶¶¶¶¶¶        ¶¶      ¶¶
-    ¶¶    ¶¶¶¶¶¶¶¶¶¶¶¶¶       ¶¶¶     ¶¶
-    ¶¶    ¶¶¶  ¶¶¶¶¶¶¶¶¶¶¶     ¶¶     ¶¶
-    ¶¶      ¶¶    ¶¶¶¶¶¶¶¶¶    ¶¶     ¶¶
-    ¶¶       ¶     ¶¶¶¶¶¶¶¶¶ ¶¶¶      ¶¶
-    ¶¶             ¶¶¶¶¶¶¶¶¶¶¶        ¶¶
-    ¶¶             ¶¶¶¶¶¶¶ ¶         ¶¶
-     ¶¶       ¶¶   ¶¶¶¶¶¶¶          ¶¶
-      ¶¶      ¶¶¶¶¶¶¶¶¶¶¶          ¶¶
-       ¶¶             ¶¶¶         ¶¶
-        ¶¶           ¶¶          ¶¶
-         ¶¶         ¶¶          ¶¶
-          ¶¶      ¶¶¶          ¶¶
-           ¶¶¶               ¶¶
-             ¶¶            ¶¶¶
-               ¶¶¶       ¶¶¶
-                 ¶¶¶  ¶¶¶
-                    ¶¶
-    )";
-    artCollection.push_back(art1);
-    string art2 = R"(
-               $$$$$$$$$$
-          $$$$$$$$$$$$$$$$$$$$
-       $$$$$$$$$$$$$$$$$$$$$$$$$$
-     $$$$$$$$$     $$       $$$$$$$
-    $$$$$$$        $$          $$$$$
-   $$$$$$          $$$           $$$$
-  $$$$$           $$$$            $$$$$
- $$$$$            $$$$             $$$$
-$$$$$             $$$$$             $$$$
-$$$$             $$$$$$              $$$
-$$$$             $$$$$$              $$$$
-$$$$            $$$$$$$$$            $$$$
-$$$$          $$$$$$$$$$$$$          $$$$
-$$$$        $$$$$$$$$$$$$$$$$        $$$$
-$$$$      $$$$$$$$$  $$$$$$$$$$      $$$$
-$$$$$  $$$$$$$$          $$$$$$$$   $$$$
- $$$$$$$$$$                  $$$$$$$$$$
-  $$$$$                           $$$$$
-  $$$$$$                         $$$$$
-    $$$$$$                     $$$$$$
-     $$$$$$$                 $$$$$$
-       $$$$$$$$$$       $$$$$$$$$
-         $$$$$$$$$$$$$$$$$$$$$$
-             $$$$$$$$$$$$$$
-    )";
-    artCollection.push_back(art2);
-    string art3 = R"(
-                   $ 
-                  $$$ 
-                $$$$$$$$ 
-              $$$$$$$$$$$$$ 
-           $$$$$$$$$$$$$$$$$$ 
-        $$$$$$$$$$$$$$$$$$$$$$$ 
-     $$$$$$$$$   $$$$$$$$$$$$$$$$$ 
- $$$$$$$$$$$$$$$   $$$$$$$$$$$$$$$$$$ 
-$$$$$$$$$$$$$$$$$$ _____$$$$$$$$$$$$$$$$ 
-   $$$$$$$$$$$$$$$$$$       $$$$$$$$ 
-      $$$$$$$$$$$$$$$$$ 
-         $$$$$$$$$$$$$$$$$ 
-           $$$$$$$$$$$$$$$$$$ 
-              $$$$$$$$$$$$$$$$$ 
-    $$$$$$       $$$$$$$$$$$$$$$$$ 
-$$$$$$$$$$$$$$     $$$$$$$$$$$$$$$$$ 
- $$$$$$$$$$$$$$$$$   $$$$$$$$$$$$$$$$ 
-    $$$$$$$$$$$$$$$$$   $$$$$$$$$$$ 
-       $$$$$$$$$$$$$$$$_$$$$$$$$ 
-         $$$$$$$$$$$$$$$$$$$$ 
-           $$$$$$$$$$$$$$$ 
-              $$$$$$$$$$ 
-                $$$$$$ 
-    )";
-    artCollection.push_back(art3);
-
-    if (currentArtIndex >= artCollection.size())
-        currentArtIndex = 0;
-
-    stringstream ss(artCollection[currentArtIndex]);
-    string line;
-    int currentY = y;
-
-    setColor(240 + 5);
-
-    while (getline(ss, line))
-    {
-        GotoXY(x, currentY++);
-        cout << line;
-    }
-
-    setColor(240);
-}
-
-void drawSettingsArt()
-{
-    int x = 75;
-    int y = 6;
-    string art = R"(
-              ███     ███
-            ███████ ███████
-            ██░░░█████░░░██
-           ██░██░░███░██░░██
-           ██░██░░███░██░░██
-           ██░░░░░███░░░░░██
-           ███░░░█████░░░███
-          ███████████████████
-         ███████░░██░░████████
-        ███████████████████████
-       ██████▒▒▒▒▒▒▒▒▒▒▒▒▒██████
-       ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒▒▒░▒▒██
-       █▒░▒▒▒░▒▒▒▒▒░▒▒▒▒▒▒▒▒▒▒▒█
-      ██▒▒░░░▒▒░▒▒▒▒▒▒▒▒▒▒░░░▒▒██
-      ██▒░░█░░▒▒▒▒▒▒▒░▒▒▒░░█░░▒██
-     ███▒░░░██░░░░░░░░░░░██░░░▒███
-    █████▒▒░░░███████████░░░▒▒█████
-    █████ ▒▒▒░░░░░░░░░░░░░▒▒▒ █████
-     █████ ▒▒▒▒░░░░░░░░░▒▒▒▒ █████
-      ██████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒███████
-     █████████           ██████████
-    ███ ███                 ███ ████
-        ███                     ███
-    )";
-
-    stringstream ss(art);
-    string line;
-    int currentY = y;
-
-    setColor(240 + 3);
-
-    while (getline(ss, line))
-    {
-        GotoXY(x, currentY++);
-        cout << line;
-    }
-
-    setColor(240);
-}
 
 void showButtonLoad(int m) {
     std::vector<std::wstring> loadButtonText;
@@ -1343,17 +966,19 @@ void showInputText(int slr, const sf::Event& event) {
             }
 
             if (slr == 1) {
-                nameFile.setString(inputString);
-                res = saveGame(inputString);
+                if (timeFl.size() < 20) {
+                    nameFile.setString(inputString);
+                    res = saveGame(inputString);
 
-                inputText.setString("");
-                titleRecInput.setString("");
-                inputString = "";
-                rKey = 0;
-                tKey = 0;
-                pressR = 0;
-                oldFile = -1;
-                drawRec = 0;
+                    inputText.setString("");
+                    titleRecInput.setString("");
+                    inputString = "";
+                    rKey = 0;
+                    tKey = 0;
+                    pressR = 0;
+                    oldFile = -1;
+                    drawRec = 0;
+                }
             }
         }
         else if (unicode > 32 && unicode != 127)
@@ -1391,7 +1016,5 @@ void showInputText(int slr, const sf::Event& event) {
                 }
             }
         }
-
-
     }
 }
