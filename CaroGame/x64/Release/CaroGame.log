@@ -1,8 +1,114 @@
-﻿  View.cpp
-C:\Users\ACER\source\repos\CaroGame\CaroGame\View.cpp(195,25): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Generating code
-  1 of 597 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    7 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  CaroGame.vcxproj -> C:\Users\ACER\source\repos\CaroGame\x64\Release\CaroGame.exe
+﻿  AI.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\AI.cpp(141,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  AudioManager.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\AudioManager.cpp(214,44): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  Controller.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Controller.cpp(361,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Controller.cpp(362,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  Evaluation.cpp
+  Interface.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244: 'initializing': conversion from '_Ty2' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:             _Ty2=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:         ]
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244: 'initializing': conversion from '_Ty1' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:             _Ty1=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:         ]
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244: 'initializing': conversion from '_Ty2' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:             _Ty2=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:         ]
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244: 'initializing': conversion from '_Ty1' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:             _Ty1=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:         ]
+  main.cpp
+  Model.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Model.cpp(257,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Model.cpp(287,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  View.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(283,58): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(285,79): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(286,62): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(288,47): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(312,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(313,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(413,67): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(426,31): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(483,46): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(497,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(771,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(898,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1217,44): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1272,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1381,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1564,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1569,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1576,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1581,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Transformable::move(class sf::Vector2<float>)" (__imp_?move@Transformable@sf@@QEAAXV?$Vector2@M@2@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::Vector2<float> __cdecl sf::Transformable::getPosition(void)const " (__imp_?getPosition@Transformable@sf@@QEBA?AV?$Vector2@M@2@XZ)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Transformable::setPosition(class sf::Vector2<float>)" (__imp_?setPosition@Transformable@sf@@QEAAXV?$Vector2@M@2@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) bool __cdecl sf::Keyboard::isKeyPressed(enum sf::Keyboard::Key)" (__imp_?isKeyPressed@Keyboard@sf@@YA_NW4Key@12@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Shape::setFillColor(class sf::Color)" (__imp_?setFillColor@Shape@sf@@QEAAXVColor@2@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::String::String(char const *,class std::locale const &)" (__imp_??0String@sf@@QEAA@PEBDAEBVlocale@std@@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Text::setFillColor(class sf::Color)" (__imp_?setFillColor@Text@sf@@QEAAXVColor@2@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Text::setString(class sf::String const &)" (__imp_?setString@Text@sf@@QEAAXAEBVString@2@@Z)
+Controller.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::String::~String(void)" (__imp_??1String@sf@@QEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: static struct sf::RenderStates const sf::RenderStates::Default" (__imp_?Default@RenderStates@sf@@2U12@B)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Transformable::setOrigin(class sf::Vector2<float>)" (__imp_?setOrigin@Transformable@sf@@QEAAXV?$Vector2@M@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Transformable::setScale(class sf::Vector2<float>)" (__imp_?setScale@Transformable@sf@@QEAAXV?$Vector2@M@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Transformable::setRotation(class sf::Angle)" (__imp_?setRotation@Transformable@sf@@QEAAXVAngle@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::Vector2<unsigned int> __cdecl sf::Texture::getSize(void)const " (__imp_?getSize@Texture@sf@@QEBA?AV?$Vector2@I@2@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: bool __cdecl sf::Texture::loadFromFile(class std::filesystem::path const &,bool,class sf::Rect<int> const &)" (__imp_?loadFromFile@Texture@sf@@QEAA_NAEBVpath@filesystem@std@@_NAEBV?$Rect@H@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Texture::~Texture(void)" (__imp_??1Texture@sf@@QEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Texture::Texture(void)" (__imp_??0Texture@sf@@QEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Texture::Texture(class std::filesystem::path const &,bool)" (__imp_??0Texture@sf@@QEAA@AEBVpath@filesystem@std@@_N@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Font::Font(class std::filesystem::path const &)" (__imp_??0Font@sf@@QEAA@AEBVpath@filesystem@std@@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual class sf::Vector2<unsigned int> __cdecl sf::RenderWindow::getSize(void)const " (__imp_?getSize@RenderWindow@sf@@UEBA?AV?$Vector2@I@2@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::RenderWindow::RenderWindow(class sf::VideoMode,class sf::String const &,unsigned int,enum sf::State,struct sf::ContextSettings const &)" (__imp_??0RenderWindow@sf@@QEAA@VVideoMode@1@AEBVString@1@IW4State@1@AEBUContextSettings@1@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Window::display(void)" (__imp_?display@Window@sf@@QEAAXXZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual void __cdecl sf::Window::close(void)" (__imp_?close@Window@sf@@UEAAXXZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class std::optional<class sf::Event> __cdecl sf::WindowBase::pollEvent(void)" (__imp_?pollEvent@WindowBase@sf@@QEAA?AV?$optional@VEvent@sf@@@std@@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: bool __cdecl sf::WindowBase::isOpen(void)const " (__imp_?isOpen@WindowBase@sf@@QEBA_NXZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::RenderTarget::draw(class sf::Drawable const &,struct sf::RenderStates const &)" (__imp_?draw@RenderTarget@sf@@QEAAXAEBVDrawable@2@AEBURenderStates@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::RenderTarget::clear(class sf::Color)" (__imp_?clear@RenderTarget@sf@@QEAAXVColor@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) bool __cdecl sf::operator!=(class sf::String const &,class sf::String const &)" (__imp_??9sf@@YA_NAEBVString@0@0@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) private: virtual void __cdecl sf::Shape::draw(class sf::RenderTarget &,struct sf::RenderStates)const " (__imp_?draw@Shape@sf@@EEBAXAEAVRenderTarget@2@URenderStates@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Shape::setOutlineThickness(float)" (__imp_?setOutlineThickness@Shape@sf@@QEAAXM@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Shape::setOutlineColor(class sf::Color)" (__imp_?setOutlineColor@Shape@sf@@QEAAXVColor@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::String::String(wchar_t const *)" (__imp_??0String@sf@@QEAA@PEB_W@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual class sf::Vector2<float> __cdecl sf::RectangleShape::getGeometricCenter(void)const " (__imp_?getGeometricCenter@RectangleShape@sf@@UEBA?AV?$Vector2@M@2@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual class sf::Vector2<float> __cdecl sf::RectangleShape::getPoint(unsigned __int64)const " (__imp_?getPoint@RectangleShape@sf@@UEBA?AV?$Vector2@M@2@_K@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual unsigned __int64 __cdecl sf::RectangleShape::getPointCount(void)const " (__imp_?getPointCount@RectangleShape@sf@@UEBA_KXZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::Vector2<float> __cdecl sf::RectangleShape::getSize(void)const " (__imp_?getSize@RectangleShape@sf@@QEBA?AV?$Vector2@M@2@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::RectangleShape::setSize(class sf::Vector2<float>)" (__imp_?setSize@RectangleShape@sf@@QEAAXV?$Vector2@M@2@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::RectangleShape::RectangleShape(class sf::Vector2<float>)" (__imp_??0RectangleShape@sf@@QEAA@V?$Vector2@M@1@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::VideoMode::VideoMode(class sf::Vector2<unsigned int>,unsigned int)" (__imp_??0VideoMode@sf@@QEAA@V?$Vector2@I@1@I@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Sprite::setTexture(class sf::Texture const &,bool)" (__imp_?setTexture@Sprite@sf@@QEAAXAEBVTexture@2@_N@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Sprite::Sprite(class sf::Texture const &)" (__imp_??0Sprite@sf@@QEAA@AEBVTexture@1@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::Rect<float> __cdecl sf::Text::getLocalBounds(void)const " (__imp_?getLocalBounds@Text@sf@@QEBA?AV?$Rect@M@2@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: unsigned int __cdecl sf::Text::getCharacterSize(void)const " (__imp_?getCharacterSize@Text@sf@@QEBAIXZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::String const & __cdecl sf::Text::getString(void)const " (__imp_?getString@Text@sf@@QEBAAEBVString@2@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Text::setStyle(unsigned int)" (__imp_?setStyle@Text@sf@@QEAAXI@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: void __cdecl sf::Text::setCharacterSize(unsigned int)" (__imp_?setCharacterSize@Text@sf@@QEAAXI@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Text::Text(class sf::Font const &,class sf::String,unsigned int)" (__imp_??0Text@sf@@QEAA@AEBVFont@1@VString@1@I@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::RectangleShape::RectangleShape(class sf::RectangleShape &&)" (__imp_??0RectangleShape@sf@@QEAA@$$QEAV01@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::RectangleShape::RectangleShape(class sf::RectangleShape const &)" (__imp_??0RectangleShape@sf@@QEAA@AEBV01@@Z)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual __cdecl sf::Sprite::~Sprite(void)" (__imp_??1Sprite@sf@@UEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual __cdecl sf::RectangleShape::~RectangleShape(void)" (__imp_??1RectangleShape@sf@@UEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual __cdecl sf::Text::~Text(void)" (__imp_??1Text@sf@@UEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: virtual __cdecl sf::RenderWindow::~RenderWindow(void)" (__imp_??1RenderWindow@sf@@UEAA@XZ)
+Interface.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Font::~Font(void)" (__imp_??1Font@sf@@QEAA@XZ)
+View.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::Time __cdecl sf::Clock::restart(void)" (__imp_?restart@Clock@sf@@QEAA?AVTime@2@XZ)
+View.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: class sf::Time __cdecl sf::Clock::getElapsedTime(void)const " (__imp_?getElapsedTime@Clock@sf@@QEBA?AVTime@2@XZ)
+View.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) bool __cdecl sf::operator==(class sf::String const &,class sf::String const &)" (__imp_??8sf@@YA_NAEBVString@0@0@Z)
+View.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::String::String(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,class std::locale const &)" (__imp_??0String@sf@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVlocale@3@@Z)
+View.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::String::String(class std::basic_string<wchar_t,struct std::char_traits<wchar_t>,class std::allocator<wchar_t> > const &)" (__imp_??0String@sf@@QEAA@AEBV?$basic_string@_WU?$char_traits@_W@std@@V?$allocator@_W@2@@std@@@Z)
+View.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Clock::Clock(void)" (__imp_??0Clock@sf@@QEAA@XZ)
+C:\Users\ACER\source\repos\Caro-Game\x64\Release\CaroGame.exe : fatal error LNK1120: 60 unresolved externals

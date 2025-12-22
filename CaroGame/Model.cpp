@@ -122,13 +122,10 @@ pair<pii, pii> getWinLine(BOARD& board) {
         }
     }
 
-    //cout << res.first.first << " " << res.first.second << " " << res.second.first << " " << res.second.second << "\n";
-
     return res;
 }
 
 int getGameState(BOARD& board, _POINT lastMove) {
-    //Return values: 0 - draw, 1 - Win, 2 - ongoing
     function<int(_POINT&, int, int)> countConsecutive = [&](_POINT& move, int dX, int dY) {
         int res = 0;
         int x = move.x + dX, y = move.y + dY, z = move.c;

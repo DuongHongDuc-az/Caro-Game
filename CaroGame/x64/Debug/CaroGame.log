@@ -1,4 +1,52 @@
 ﻿  Controller.cpp
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\Controller.cpp(229,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\Controller.cpp(230,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  CaroGame.vcxproj -> E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\x64\Debug\CaroGame.exe
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Controller.cpp(361,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Controller.cpp(362,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  Interface.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244: 'initializing': conversion from '_Ty2' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:             _Ty2=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(310,34): warning C4244:         ]
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244: 'initializing': conversion from '_Ty1' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:             _Ty1=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(311,34): warning C4244:         ]
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244: 'initializing': conversion from '_Ty2' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:             _Ty2=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(312,32): warning C4244:         ]
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244: 'initializing': conversion from '_Ty1' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:         with
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:         [
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:             _Ty1=int
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp(313,32): warning C4244:         ]
+  Model.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Model.cpp(257,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Model.cpp(287,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  View.cpp
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(283,58): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(285,79): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(286,62): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(288,47): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(312,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(313,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(413,67): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(426,31): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(483,46): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(497,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(771,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(898,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1217,44): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1272,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1381,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1564,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1569,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1576,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp(1581,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  main.cpp
+  Generating Code...
+  CaroGame.vcxproj -> C:\Users\ACER\source\repos\Caro-Game\x64\Debug\CaroGame.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.

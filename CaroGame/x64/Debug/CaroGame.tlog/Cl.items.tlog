@@ -1,6 +1,8 @@
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\AudioManager.cpp;E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\x64\Debug\AudioManager.obj
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\Controller.cpp;E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\x64\Debug\Controller.obj
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\giaoDien.cpp;E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\x64\Debug\giaoDien.obj
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\main.cpp;E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\x64\Debug\main.obj
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\Model.cpp;E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\x64\Debug\Model.obj
-E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\View.cpp;E:\HCMUS\giaoDienCaro\DuongHongDuc-az\Caro-Game\CaroGame\x64\Debug\View.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\AI.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\AI.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\AudioManager.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\AudioManager.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Controller.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\Controller.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Evaluation.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\Evaluation.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Interface.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\Interface.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\main.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\main.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\Model.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\Model.obj
+C:\Users\ACER\source\repos\Caro-Game\CaroGame\View.cpp;C:\Users\ACER\source\repos\Caro-Game\CaroGame\x64\Debug\View.obj
