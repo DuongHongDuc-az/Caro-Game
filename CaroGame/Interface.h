@@ -50,11 +50,7 @@ extern sf::Text loadText;
 extern sf::Text inputText;
 extern sf::Text nameFile;
 extern sf::Text titleLoad;
-
-struct Star {
-    float x, y;
-    float brightness;
-};
+extern sf::Text warText;
 
 void soundBar(int w);
 void initKeyToggle(sf::Vector2f pos);

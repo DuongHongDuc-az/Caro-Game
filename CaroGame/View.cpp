@@ -1638,6 +1638,9 @@ void showInputText(int slr, const sf::Event& event) {
     if (const sf::Event::TextEntered* textEventData = event.getIf<sf::Event::TextEntered>())
     {
         uint32_t unicode = textEventData->unicode;
+        int check = checkInputString(inputString);
+
+        warText.setString("");
 
         if (unicode == 8)
         {
@@ -1646,17 +1649,28 @@ void showInputText(int slr, const sf::Event& event) {
         }
         else if (unicode == 13)
         {
-            if (slr == 3) {
-                res = renameGame(timeFl[oldFile].ff, inputString);
 
-                inputText.setString("");
-                titleRecInput.setString("");
-                inputString = "";
-                rKey = 0;
-                tKey = 0;
-                pressR = 0;
-                oldFile = -1;
-                drawRec = 0;
+            if (slr == 3) {
+                if (check == 1) {
+                    res = renameGame(timeFl[oldFile].ff, inputString);
+
+                    inputText.setString("");
+                    titleRecInput.setString("");
+                    inputString = "";
+                    rKey = 0;
+                    tKey = 0;
+                    pressR = 0;
+                    oldFile = -1;
+                    drawRec = 0;
+                }
+                else {
+                    warText.setString(langChoice == 1 ? "File existed yet" : "File đã tồn tại");
+                    sf::FloatRect bound = warText.getLocalBounds();
+
+                    warText.setOrigin(bound.getCenter());
+                    warText.setPosition(sf::Vector2f({ WINDOW_W / 2 - (float)warText.getCharacterSize() / 2 + 15, slr == 3 ? (float)WINDOW_H / 2 : (float)WINDOW_H / 2 - 25 }));
+                    warText.setFillColor(sf::Color::Red);
+                }
             }
 
             if (slr == 1) {

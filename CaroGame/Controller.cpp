@@ -36,6 +36,14 @@ void handleLoad(bool startFromMenu, const sf::Event& event);
 void handleRename(const sf::Event& event);
 void handleDelete();
 
+int checkInputString(std::string s) {
+    for (int i = 0; i < timeFl.size(); ++i) {
+        if (timeFl[i].ff == s) return 0;
+    }
+
+    return 1;
+}
+
 void updateKeyToggle() {
     float leftPos = toggleTrack.getPosition().x;
     float rightPos = toggleTrack.getPosition().x + trackW - thumbW;

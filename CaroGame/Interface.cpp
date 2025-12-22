@@ -30,6 +30,7 @@ sf::Text loadText(font, "", 10);
 sf::Text inputText(font, "", 30);
 sf::Text nameFile(font, "", 60);
 sf::Text titleLoad(font, "", 80);
+sf::Text warText(font, "", 25);
 
 static sf::Texture texMain;
 static sf::Texture texMenu;
@@ -283,12 +284,11 @@ void startGame() {
                 displayListOfFile();
                 showButtonLoad(22);
 
-                if (drawRec == 1 && rKey == 1) {
-                    window.draw(recBig);
-                }
+                if (drawRec == 1 && rKey == 1) window.draw(recBig);
                 window.draw(titleRecInput);
                 if (drawRec == 1 && rKey == 1) window.draw(recSmall);
                 window.draw(inputText);
+                window.draw(warText);
             }
 
             if (tKey == 1 && lKey != 1) {
@@ -338,6 +338,7 @@ void startGame() {
                 window.draw(titleRecInput);
                 if (drawRec == 1) window.draw(recSmall);
                 window.draw(inputText);
+                window.draw(warText);
             }
         }
         if (currentMenu == 4) {

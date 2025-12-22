@@ -20,6 +20,7 @@ extern int res;
 extern int askCon;
 extern int selectedFile;
 
+int checkInputString(std::string s);
 void fixConsoleWindow();
 void GotoXY(int x, int y);
 void setColor(int color);
